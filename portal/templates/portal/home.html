@@ -1,0 +1,9 @@
+{% extends 'portal/base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block body %}
+    <h2>Welcome To Eway Print</h2>
+    <br>
+    <a href="{% url 'logout' %}"><button class="btn btn-danger">Logout</button></a>
+{% endblock %}
