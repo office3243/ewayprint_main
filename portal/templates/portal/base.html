@@ -11,7 +11,11 @@
 
 </head>
 <body>
-
+{% if messages %}
+    {% for meesage in messages %}
+        <span class="alert  alert-{{ meesage.tags }}">{{ meesage }}</span>
+    {% endfor %}
+{% endif %}
     <div class="container jumbotron text-center">
 
         {% block body %}

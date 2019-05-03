@@ -1,0 +1,44 @@
+{% extends 'portal/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}My Transactions{% endblock %}
+
+{% block body %}
+
+    <div class="jumbotron container">
+        <h1>My Transactions | {{ user }}</h1>
+        <br><br>
+
+        <table class="table table-hover">
+            <tr class="info">
+                <td>Name</td>
+                <td>File</td>
+                <td>Amount</td>
+                <td>Payment Mode</td>
+                <td>Printed</td>
+                <td>Actions</td>
+            </tr>
+
+            {% for transaction in transactions %}
+                <tr>
+                    <td>{{ transaction }}</td>
+                    <td><a href="{{transaction.file_name }}">{{ transaction.file }}</a></td>
+                    <td>{{ transaction.amount }}</td>
+                    <td>{{ transaction.pay_mode }}</td>
+                    <td>{{ transaction.printed }}</td>
+                    <td>
+                        {% if transaction.printed == False %}
+                            <a href="#"><button class="btn btn-danger">Delete</button></a>
+                        {% else %}
+                            <button class="btn btn-primary">&nbsp;View&nbsp;</button>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <p><a href="{% url 'portal:home' %}">Home</a></p>
+
+
+{% endblock %}

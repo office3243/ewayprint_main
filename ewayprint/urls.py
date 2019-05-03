@@ -19,5 +19,10 @@ from django.conf.urls import url, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    url(r'', include('portal.urls')),
+    url(r'', include('portal.urls', namespace='portal')),
+    url(r'^transactions/', include('transactions.urls', namespace='transactions')),
+    url(r'^wallets/', include('wallets.urls', namespace='wallets')),
+
+    # url(r'^stations/', include('stations.urls', namespace='stations')),
+
 ]

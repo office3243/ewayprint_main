@@ -1,0 +1,17 @@
+from django.db import models
+
+
+class Station(models.Model):
+    name = models.CharField(max_length=32)
+    code = models.CharField(max_length=6, unique=True)
+    water_mark = models.FileField(upload_to='station/water_marks/', null=True, blank=True)
+    coordinates = models.CharField(max_length=100, blank=True)
+    address = models.TextField(blank=True)
+    locality = models.CharField(max_length=32, blank=True)
+    city = models.CharField(max_length=32, blank=True)
+    embed_code = models.TextField(blank=True)
+    details = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.name
+

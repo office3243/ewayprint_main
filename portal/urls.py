@@ -3,9 +3,11 @@ from django.contrib.auth.views import LoginView, LogoutView
 from . import views
 from .forms import CustomLoginForm
 
+app_name = 'portal'
+
 
 urlpatterns = [
-    url(r'^$', views.home, name='home'),
+    url(r'^$', views.HomeView.as_view(), name='home'),
     url(r'^login/$', LoginView.as_view(template_name='portal/login.html', authentication_form=CustomLoginForm), name='login'),
     # url(r'^login/$', LoginView.as_view(template_name='portal/login.html',),
     #     name='login'),

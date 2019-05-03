@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
 from .forms import SignUpForm
 from django.contrib.auth.decorators import login_required
+from django.views.generic import TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-@login_required
-def home(request):
-    return render(request, 'portal/home.html')
+class HomeView(LoginRequiredMixin, TemplateView):
+    template_name = 'portal/home.html'
 
 
 def signup(request):
@@ -13,8 +14,9 @@ def signup(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('home')
+            return redirect('portal:home')
     else:
         form = SignUpForm()
     return render(request, 'portal/signup.html', {'form': form})
+
 

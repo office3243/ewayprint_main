@@ -37,8 +37,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'portal',
+    'transactions',
+    'stations',
+    'wallets',
+    'recharges',
+
     'crispy_forms',
+
 ]
 
 MIDDLEWARE = [
@@ -134,5 +141,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 from django.urls import reverse_lazy
 
-LOGIN_URL = reverse_lazy('login')
-LOGIN_REDIRECT_URL = reverse_lazy('home')
+LOGIN_URL = reverse_lazy('portal:login')
+LOGIN_REDIRECT_URL = reverse_lazy('portal:home')
+
+INSUFFICIENT_BALANCE_MESSAGE = "You don't have enough balance. Kindly recharge your wallet to make this transaction"

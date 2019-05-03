@@ -4,6 +4,10 @@
 
 {% block body %}
     <h2>Welcome To Eway Print</h2>
-    <br>
-    <a href="{% url 'logout' %}"><button class="btn btn-danger">Logout</button></a>
+    <a href="{% url 'transactions:add' %}"><button class="btn btn-success">Add Transaction</button></a>
+
+    <a href="{% url 'transactions:list' %}"><button class="btn btn-success">My Transactions</button></a>
+
+    <br><br><br>
+    <a href="{% url 'portal:logout' %}"><button class="btn btn-danger">Logout</button></a>
 {% endblock %}
