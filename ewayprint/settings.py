@@ -43,8 +43,10 @@ INSTALLED_APPS = [
     'stations',
     'wallets',
     'recharges',
+    'payments',
 
     'crispy_forms',
+    'paywix',
 
 ]
 
@@ -145,3 +147,13 @@ LOGIN_URL = reverse_lazy('portal:login')
 LOGIN_REDIRECT_URL = reverse_lazy('portal:home')
 
 INSUFFICIENT_BALANCE_MESSAGE = "You don't have enough balance. Kindly recharge your wallet to make this transaction"
+
+
+
+# Payments App
+PAYU_MERCHANT_KEY = "mdLYzH6I" # Merchant key from payu
+PAYU_KEY = "mdLYzH6I"
+PAYU_SALT = "BgIZKB6m9D" # Merchant salt from payu
+PAYMENT_MODE ='TEST'
+PAYU_SUCCESS_URL = reverse_lazy('payments:success')# success url
+PAYU_FAILURE_URL = reverse_lazy('payments:failure')# failure url
