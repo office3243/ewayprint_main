@@ -49,7 +49,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         """
         Returns the short name for the user.
         """
-        return self.first_name
+        return self.phone
 
     def email_user(self, subject, message, from_email=None, **kwargs):
         """
@@ -60,3 +60,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     def deduct_amount(self, amount):
         self.wallet.balance -= amount
         self.wallet.save()
+
+    @property
+    def get_wallet(self):
+        return self.wallet

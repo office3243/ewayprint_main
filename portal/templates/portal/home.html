@@ -8,8 +8,10 @@
 
     <a href="{% url 'transactions:list' %}"><button class="btn btn-success">My Transactions</button></a>
 
-    <a href="{% url 'wallets:wallet_view' %}"><button class="btn btn-success">My Wallet</button></a>
+    <a href="{% url 'wallets:view' %}"><button class="btn btn-success">My Wallet</button></a>
 
     <br><br><br>
     <a href="{% url 'portal:logout' %}"><button class="btn btn-danger">Logout</button></a>
+
+
 {% endblock %}

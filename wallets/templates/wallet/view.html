@@ -3,8 +3,31 @@
 {% block title %}Wallet{% endblock %}
 
 {% block body %}
-    <h3>{{ user }}</h3>
+    <h3>{{ user.get_short_name }}</h3>
 
     <h4>Balance : {{ wallet.balance }}</h4>
+
+    <br><hr>
+
+    <div class="container">
+        <form method="post" action="{% url "recharges:create_with_custom_pack" %}">
+            {% csrf_token %}
+            <input name="custom_price" type="number"/>
+            <input type="submit" class="btn info-color-dark" value="Make Custom Recharge">
+        </form>
+    </div>
+
+    {% if offer_packs %}
+        {% for offer_pack in offer_packs %}
+            <div class="col-lg-3 info-color">
+                <h4>{{ offer_pack.name }}</h4>
+                <p>{{ offer_pack.headline }}</p>
+                <a href="{{ offer_pack.get_make_recharge_url }}" class="btn blue-gradient">Recharge</a>
+            </div>
+        {% endfor %}
+    {% else %}
+        <h4>No Offer Packs</h4>
+
+    {% endif %}
 
 {% endblock %}

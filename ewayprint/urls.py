@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'^transactions/', include('transactions.urls', namespace='transactions')),
     url(r'^wallets/', include('wallets.urls', namespace='wallets')),
     url(r'^payments/', include('payments.urls', namespace='payments')),
+    url(r'^recharges/', include('recharges.urls', namespace='recharges')),
 
     # url(r'^stations/', include('stations.urls', namespace='stations')),
 
