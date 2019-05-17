@@ -4,13 +4,9 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse_lazy
 from django.conf import settings
+from .managers import OfferPackManager, RechargeManager
 
 USER_MODEL = settings.AUTH_USER_MODEL
-
-
-class OfferPackManager(models.Manager):
-    def get_offer_packs(self):
-        return self.get_queryset().filter(active=True).order_by('preference')
 
 
 class OfferPack(models.Model):
@@ -41,7 +37,11 @@ class CustomPack(models.Model):
 
 
 class Recharge(models.Model):
-    wallet = models.OneToOneField(Wallet, on_delete=models.CASCADE)
+
+    STATUS_CHOICES = (('IN', 'Initiated'), ('SC', 'Success'), ('FL', 'Failed'), ('HD', "Hold"))
+
+    user = models.ForeignKey(USER_MODEL, on_delete=models.CASCADE)
+    # wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE)
 
     pack_type = models.ForeignKey(ContentType, on_delete=models.PROTECT)
     pack_id = models.PositiveIntegerField()
@@ -49,11 +49,59 @@ class Recharge(models.Model):
 
     created_on = models.DateTimeField(auto_now_add=True)
 
-    payment_success = models.BooleanField(default=False)
-    success = models.BooleanField(default=False)
+    status = models.CharField(max_length=2, choices=STATUS_CHOICES, default='IN')
+
+    objects = RechargeManager()
 
     def __str__(self):
-        return "{} - {}".format(self.wallet, self.pack)
+        return "{} - {}".format(self.id, self.pack)
 
+    def verify_recharge(self, amount):
+        if self.get_amount == amount:
+            return True
+        else:
+            return False
+
+    @property
+    def get_user(self):
+        return self.user
+
+    @property
+    def get_amount(self):
+        return self.pack.price
+
+    @property
+    def get_firstname(self):
+        return self.user.first_name
+
+    @property
+    def get_email(self):
+        return self.user.email
+
+    @property
+    def get_phone(self):
+        return self.user.phone
+
+    @property
+    def get_productinfo(self):
+        return "Recharge of {} rs by {} on {}".format(self.get_amount, self.get_firstname, self.created_on)
+
+    @property
+    def get_payment_info_dict(self):
+        payment_data = {
+            'amount': self.get_amount,
+            'productinfo': self.get_productinfo
+        }
+        return payment_data
+
+    def payment_succeed(self):
+        self.get_wallet.balance += self.pack.balance
+        self.get_wallet.save()
+        self.status = 'SC'
+        self.save()
+
+    def payment_failed(self):
+        self.success = 'FL'
+        self.save()
 
 # def add_balance_to_wallet(sender, instance, *args, **kwargs):

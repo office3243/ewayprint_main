@@ -12,7 +12,7 @@
     <div class="container">
         <form method="post" action="{% url "recharges:create_with_custom_pack" %}">
             {% csrf_token %}
-            <input name="custom_price" type="number"/>
+            <input name="custom_price" type="number" maxlength=4 max=9999/>
             <input type="submit" class="btn info-color-dark" value="Make Custom Recharge">
         </form>
     </div>

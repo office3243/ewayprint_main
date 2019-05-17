@@ -148,12 +148,18 @@ LOGIN_REDIRECT_URL = reverse_lazy('portal:home')
 
 INSUFFICIENT_BALANCE_MESSAGE = "You don't have enough balance. Kindly recharge your wallet to make this transaction"
 
-
+site_domain = "http://127.0.0.1:8000/"
 
 # Payments App
 PAYU_MERCHANT_KEY = "mdLYzH6I" # Merchant key from payu
 PAYU_KEY = "mdLYzH6I"
 PAYU_SALT = "BgIZKB6m9D" # Merchant salt from payu
 PAYMENT_MODE ='TEST'
-PAYU_SUCCESS_URL = reverse_lazy('payments:success')# success url
-PAYU_FAILURE_URL = reverse_lazy('payments:failure')# failure url
+# PAYU_SUCCESS_URL = site_domain + str(reverse_lazy('payments:payment_success'))
+# PAYU_FAILURE_URL = site_domain + str(reverse_lazy('payments:payment_failure'))
+
+PAYU_SUCCESS_URL = "http://127.0.0.1:8000/payments/success/"
+PAYU_FAILURE_URL = "http://127.0.0.1:8000/payments/failure/"
+
+
+
