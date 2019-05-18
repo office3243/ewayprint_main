@@ -67,6 +67,10 @@ class Recharge(models.Model):
         return self.user
 
     @property
+    def get_wallet(self):
+        return self.user.get_wallet
+
+    @property
     def get_amount(self):
         return self.pack.price
 
