@@ -40,8 +40,8 @@ class Recharge(models.Model):
 
     STATUS_CHOICES = (('IN', 'Initiated'), ('SC', 'Success'), ('FL', 'Failed'), ('HD', "Hold"))
 
-    user = models.ForeignKey(USER_MODEL, on_delete=models.CASCADE)
-    # wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE)
+    # user = models.ForeignKey(USER_MODEL, on_delete=models.CASCADE)
+    wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE)
 
     pack_type = models.ForeignKey(ContentType, on_delete=models.PROTECT)
     pack_id = models.PositiveIntegerField()
@@ -64,11 +64,11 @@ class Recharge(models.Model):
 
     @property
     def get_user(self):
-        return self.user
+        return self.get_wallet.get_user
 
     @property
     def get_wallet(self):
-        return self.user.get_wallet
+        return self.wallet
 
     @property
     def get_amount(self):
@@ -76,15 +76,15 @@ class Recharge(models.Model):
 
     @property
     def get_firstname(self):
-        return self.user.first_name
+        return self.get_user.first_name
 
     @property
     def get_email(self):
-        return self.user.email
+        return self.get_user.email
 
     @property
     def get_phone(self):
-        return self.user.phone
+        return self.get_user.phone
 
     @property
     def get_productinfo(self):

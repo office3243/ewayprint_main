@@ -9,6 +9,7 @@ class WalletView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['wallet'] = self.request.user.wallet
+        context['wallet'] = self.request.user.get_wallet
         context['offer_packs'] = OfferPack.objects.get_offer_packs()
+        context['recharges'] = self.request.user.get_wallet.get_success_recharges
         return context
