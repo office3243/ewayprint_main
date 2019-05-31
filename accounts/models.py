@@ -32,6 +32,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     phone = models.CharField(_('phone number'), max_length=13, validators=[phone_number_validator, ], unique=True)
     email = models.EmailField(_('email address'), blank=True)
 
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True)
+
     phone_verified = models.BooleanField(default=False)
     first_name = models.CharField(_('first name'), max_length=32, blank=True)
     last_name = models.CharField(_('last name'), max_length=32, blank=True)
@@ -76,35 +78,21 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.save()
 
     def otp_generate(self, request):
-        if hasattr(self, 'usersession'):
-            self.usersession.delete()
-        user_session = UserSession.objects.create(user=self)
-        request.session["user_session_uuid"] = str(user_session.uuid)
+        request.session["user_session_uuid"] = str(self.uuid)
         send_otp_2fa(request, self.phone)
         messages.info(request, alert_messages.REGISTERATION_OTP_SENT_MESSAGE)
         return redirect("accounts:otp_verify")
 
     def password_reset_otp_generate(self, request):
-        if hasattr(self, 'usersession'):
-            self.usersession.delete()
-        user_session = UserSession.objects.create(user=self)
-        request.session["user_session_uuid"] = str(user_session.uuid)
+        request.session["user_session_uuid"] = str(self.uuid)
         send_otp_2fa(request, self.phone)
         messages.info(request, alert_messages.PASSWORD_RESET_OTP_SENT_MESSAGE)
         return redirect("accounts:password_reset_new")
 
 
-class UserSession(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    uuid = models.UUIDField(default=uuid.uuid4, unique=True)
-
-    def __str__(self):
-        return "{} - {}".format(self.user.__str__,
-                                     self.uuid)
-
-
 def create_wallet(instance, sender, *args, **kwargs):
     if not hasattr(instance, 'wallet'):
         Wallet.objects.create(user=instance)
+
 
 post_save.connect(create_wallet, sender=User)

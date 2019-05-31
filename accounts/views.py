@@ -1,5 +1,4 @@
 import requests
-from .models import UserSession
 from .forms import RegisterForm, PasswordResetForm, PasswordResetNewForm, OTPForm
 from django.views.generic import TemplateView, ListView, FormView, View
 from django.conf import settings
@@ -36,17 +35,17 @@ class RegisterView(FormView):
 
 def otp_resend(request):
     try:
-        user = UserSession.objects.get(uuid=request.session.get("user_session_uuid")).user
+        user = USER_MODEL.objects.get(uuid=request.session.get("user_session_uuid"))
         return user.otp_generate(request)
-    except UserSession.DoesNotExist:
+    except USER_MODEL.DoesNotExist:
         raise Http404("Bad Request")
 
 
 def password_reset_otp_resend(request):
     try:
-        user = UserSession.objects.get(uuid=request.session.get("user_session_uuid")).user
+        user = USER_MODEL.objects.get(uuid=request.session.get("user_session_uuid"))
         return user.password_reset_otp_generate(request)
-    except UserSession.DoesNotExist:
+    except USER_MODEL.DoesNotExist:
         raise Http404("Bad Request")
 
 
@@ -57,14 +56,12 @@ class OTPVerifyView(FormView):
 
     def post(self, request, *args, **kwargs):
         otp = request.POST['otp']
-        user_session = UserSession.objects.get(uuid=request.session["user_session_uuid"])
-        user = user_session.user
+        user = USER_MODEL.objects.get(uuid=request.session["user_session_uuid"])
         otp_match = check_otp_2fa(otp=otp, otp_session_data=request.session['user_session_data'])
         if otp_match:
             user.make_phone_verified_and_active()
             del request.session['user_session_uuid']
             del request.session['user_session_data']
-            user_session.delete()
             messages.success(request, alert_messages.REGISTERATION_SUCCESS_MESSAGE)
             login(request, user)
             return redirect("portal:home")
@@ -118,8 +115,7 @@ class PasswordResetNewView(FormView):
         otp = form.cleaned_data.get('otp')
         password1 = form.cleaned_data.get('password1')
         password2 = form.cleaned_data.get('password2')
-        user_session = UserSession.objects.get(uuid=self.request.session["user_session_uuid"])
-        user = user_session.user
+        user = USER_MODEL.objects.get(uuid=self.request.session["user_session_uuid"])
 
         otp_match = check_otp_2fa(otp=otp, otp_session_data=self.request.session['user_session_data'])
         if otp_match:
@@ -127,7 +123,6 @@ class PasswordResetNewView(FormView):
             user.save()
             del self.request.session['user_session_uuid']
             del self.request.session['user_session_data']
-            user_session.delete()
             messages.success(self.request, "Password changed")
             login(self.request, user)
             return redirect("portal:home")
