@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'accounts',
     'portal',
     'transactions',
     'stations',
@@ -131,19 +132,21 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+API_KEY_2FA = "c9ef2a2e-806a-11e9-ade6-0200cd936042"
 
-AUTH_USER_MODEL = 'portal.User'
+AUTH_USER_MODEL = 'accounts.User'
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 
 )
 
+
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 from django.urls import reverse_lazy
 
-LOGIN_URL = reverse_lazy('portal:login')
+LOGIN_URL = reverse_lazy('accounts:login')
 LOGIN_REDIRECT_URL = reverse_lazy('portal:home')
 
 INSUFFICIENT_BALANCE_MESSAGE = "You don't have enough balance. Kindly recharge your wallet to make this transaction"

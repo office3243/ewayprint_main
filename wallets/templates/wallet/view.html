@@ -29,10 +29,11 @@
         <h4>No Offer Packs</h4>
 
     {% endif %}
-
+<hr>
+    <br><br><br>
     {% if recharges %}
         {% for recharge in recharges %}
-            <span class="blue-gradient alert">{{ recharge }}</span>
+            <a href="{{ recharge.get_absolute_url }}"><span class="blue-gradient alert">{{ recharge }}</span></a>
         {% endfor %}
     {% endif %}
 

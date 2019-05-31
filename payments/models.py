@@ -1,5 +1,5 @@
 from django.db import models
-from portal.validators import phone_number_validator
+from accounts.validators import phone_number_validator
 from .managers import PaymentManager
 
 

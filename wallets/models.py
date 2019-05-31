@@ -25,3 +25,5 @@ class Wallet(models.Model):
     def get_user(self):
         return self.user
 
+
+

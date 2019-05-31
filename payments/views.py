@@ -53,7 +53,6 @@ def payment_success(request):
         payment.succeed()
         return recharge_succeed(request, payment)
 
-
 @csrf_protect
 @csrf_exempt
 def payment_failure(request):

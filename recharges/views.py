@@ -3,7 +3,8 @@ from recharges.models import Recharge, OfferPack, CustomPack
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-
+from django.views.generic import DetailView
+from django.http import Http404
 
 import decimal
 
@@ -33,12 +34,23 @@ def create_with_offer_pack(request, offer_pack_id):
 
 @login_required
 def create_with_custom_pack(request):
-    if request.method == "POST":
-        custom_price = request.POST['custom_price']
-        print(decimal.Decimal(custom_price))
-        custom_pack = CustomPack.objects.create(price=decimal.Decimal(custom_price), balance=decimal.Decimal(custom_price))
-        recharge = Recharge.objects.create(wallet=request.user.get_wallet, pack=custom_pack)
-        return create_payment(request, recharge)
-    else:
+    try:
+        if request.method == "POST" :
+            custom_price = decimal.Decimal(request.POST['custom_price'])
+            if custom_price > 1.00:
+                custom_pack = CustomPack.objects.create(price=custom_price, balance=decimal.Decimal(custom_price))
+                recharge = Recharge.objects.create(wallet=request.user.get_wallet, pack=custom_pack)
+                return create_payment(request, recharge)
+        return redirect("wallets:view")
+    except:
         return redirect("wallets:view")
 
+
+class RechargeDetailView(DetailView):
+
+    template_name = 'recharges/detail.html'
+    context_object_name = 'recharge'
+    slug_url_kwarg = 'recharge_id'
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Recharge, pk=self.kwargs.get('recharge_id', None), wallet__user=self.request.user)

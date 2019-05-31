@@ -56,6 +56,15 @@ class Recharge(models.Model):
     def __str__(self):
         return "{} - {}".format(self.id, self.pack)
 
+    def get_absolute_url(self):
+        return reverse_lazy('recharges:detail', kwargs={'recharge_id': self.id})
+
+    def get_short_line(self):
+        return self.__str__()
+
+    def get_headline(self):
+        return self.__str__() +" On " + str(self.created_on)
+
     def verify_recharge(self, amount):
         if self.get_amount == amount:
             return True
