@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'wallets',
     'recharges',
     'payments',
+    'dealers',
 
     'crispy_forms',
     'paywix',

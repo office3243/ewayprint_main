@@ -1,6 +1,6 @@
 import requests
 from .forms import RegisterForm, PasswordResetForm, PasswordResetNewForm, OTPForm
-from django.views.generic import TemplateView, ListView, FormView, View
+from django.views.generic import TemplateView, ListView, FormView, View, DetailView, UpdateView
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash, get_user_model
@@ -129,6 +129,11 @@ class PasswordResetNewView(FormView):
         else:
             messages.warning(self.request, "please enter correct OTP!")
             return redirect("accounts:password_reset_new")
+
+
+class ProfileView(LoginRequiredMixin, DetailView):
+
+    template_name = "accounts/profile.html"
 
 
 # class PasswordChange(LoginRequiredMixin, FormView):

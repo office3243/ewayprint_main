@@ -5,7 +5,9 @@ from . models import User
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import password_validation
-from django.conf import settings
+from django.contrib.auth import get_user_model
+
+USER_MODEL = get_user_model()
 
 
 class CustomLoginForm(AuthenticationForm):
@@ -62,3 +64,10 @@ class OTPForm(forms.Form):
 
     class Meta:
         fields = ('otp', )
+
+
+class ProfileUpdateView(forms.ModelForm):
+
+    class Meta:
+        model = USER_MODEL
+        fields = ('')

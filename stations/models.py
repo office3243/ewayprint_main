@@ -1,7 +1,19 @@
 from django.db import models
 
 
+class StationClass(models.Model):
+    name = models.CharField(max_length=32)
+    color_name = models.CharField(max_length=32, blank=True)
+    color_hex_code = models.CharField(max_length=7, blank=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Station(models.Model):
+
+    dealer = models.ForeignKey("dealers.Dealer", on_delete=models.PROTECT)
+
     name = models.CharField(max_length=32)
     code = models.CharField(max_length=6, unique=True)
     water_mark = models.FileField(upload_to='station/water_marks/', null=True, blank=True)
