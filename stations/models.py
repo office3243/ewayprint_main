@@ -13,6 +13,7 @@ class StationClass(models.Model):
 class Station(models.Model):
 
     dealer = models.ForeignKey("dealers.Dealer", on_delete=models.PROTECT)
+    station_class = models.ForeignKey(StationClass, on_delete=models.CASCADE)
 
     name = models.CharField(max_length=32)
     code = models.CharField(max_length=6, unique=True)
