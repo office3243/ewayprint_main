@@ -54,7 +54,6 @@ class PasswordResetNewForm(forms.Form):
             except forms.ValidationError as error:
                 self.add_error('password2', error)
 
-
     class Meta:
         fields = ('otp', 'password1', 'password2')
 
@@ -66,8 +65,8 @@ class OTPForm(forms.Form):
         fields = ('otp', )
 
 
-class ProfileUpdateView(forms.ModelForm):
+class ProfileUpdateForm(forms.ModelForm):
 
     class Meta:
         model = USER_MODEL
-        fields = ('')
+        fields = ('first_name', 'last_name', 'city', )

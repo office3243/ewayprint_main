@@ -1,5 +1,5 @@
 import requests
-from .forms import RegisterForm, PasswordResetForm, PasswordResetNewForm, OTPForm
+from .forms import RegisterForm, PasswordResetForm, PasswordResetNewForm, OTPForm, ProfileUpdateForm
 from django.views.generic import TemplateView, ListView, FormView, View, DetailView, UpdateView
 from django.conf import settings
 from django.contrib import messages
@@ -131,8 +131,9 @@ class PasswordResetNewView(FormView):
             return redirect("accounts:password_reset_new")
 
 
-class ProfileView(LoginRequiredMixin, DetailView):
+class ProfileView(LoginRequiredMixin, UpdateView):
 
+    form_class = ProfileUpdateForm
     template_name = "accounts/profile.html"
 
 
