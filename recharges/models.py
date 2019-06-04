@@ -15,7 +15,7 @@ class OfferPack(models.Model):
     price = models.DecimalField(max_digits=6, decimal_places=2)
     balance = models.DecimalField(max_digits=6, decimal_places=2)
     details = models.TextField(blank=True)
-    active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
     preference = models.PositiveSmallIntegerField(default=1)
 
     def __str__(self):

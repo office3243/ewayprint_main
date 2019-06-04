@@ -2,9 +2,13 @@ from django.db import models
 
 
 class StationClass(models.Model):
+    rate = models.ForeignKey('rates.Rate', on_delete=models.CASCADE)
     name = models.CharField(max_length=32)
     color_name = models.CharField(max_length=32, blank=True)
     color_hex_code = models.CharField(max_length=7, blank=True)
+    details = models.TextField(blank=True)
+
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
@@ -24,6 +28,8 @@ class Station(models.Model):
     city = models.CharField(max_length=32, blank=True)
     embed_code = models.TextField(blank=True)
     details = models.TextField(blank=True)
+
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name

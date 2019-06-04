@@ -4,7 +4,7 @@ from payments import views as payment_views
 
 class OfferPackManager(models.Manager):
     def get_offer_packs(self):
-        return self.get_queryset().filter(active=True).order_by('preference')
+        return self.get_queryset().filter(is_active=True).order_by('preference')
 
 
 class RechargeManager(models.Manager):

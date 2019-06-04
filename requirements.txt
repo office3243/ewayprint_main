@@ -3,3 +3,10 @@ pillow
 django-crispy-forms
 paywix
 requests
+django-extensions
+pyparsing
+pydot
+graphviz
+pydot-ng
+Werkzeug
+
