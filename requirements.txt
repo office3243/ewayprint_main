@@ -10,3 +10,4 @@ graphviz
 pydot-ng
 Werkzeug
 
+coverage

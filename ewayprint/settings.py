@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'payments',
     'dealers',
     'rates',
+    'complaints',
 
     'crispy_forms',
     'paywix',
