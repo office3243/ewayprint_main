@@ -9,4 +9,8 @@ urlpatterns = [
     url(r'^get_otp/(?P<otp_1>[0-9]+)/(?P<otp_2>[0-9]+)/$', views.GetOtpView.as_view(),
         name='get_otp'),
     url(r'^list/$', views.TransactionListView.as_view(), name='list'),
+    url(r'^detail/(?P<uuid>[0-9a-f-]+)/$', views.TransactionDetailView.as_view(), name='detail'),
+    url(r'^delete/(?P<uuid>[0-9a-f-]+)/$', views.TransactionDeleteView.as_view(), name='delete'),
+    url(r'^hide/(?P<uuid>[0-9a-f-]+)/$', views.TransactionHideView.as_view(), name='hide'),
+
 ]

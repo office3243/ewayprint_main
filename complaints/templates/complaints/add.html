@@ -5,14 +5,12 @@
 
 {% block body %}
 
-    <h2>Upload your file</h2>
-        <h1>{{ request.path }}</h1>
+    <h2>{{ complaint.get_display_text }}</h2>
 
 
     <div class="container col-lg-4">
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-
 
             {{ form|crispy }}
 

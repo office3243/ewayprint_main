@@ -6,6 +6,8 @@ LOGGED_OUT_MESSAGE = "Logged out successfully"
 
 PASSWORD_CHANGED_SUCCESS_MESSAGE = "Password changed successfully"
 
+PROFILE_UPDATED_MESSAGE = "Profile Updated Successfully"
+
 
 #   INFO
 

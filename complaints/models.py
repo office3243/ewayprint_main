@@ -1,8 +1,11 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.conf import settings
+from django.urls import reverse_lazy, reverse
 
 
-User_Model = get_user_model()
+# User_Model = get_user_model()
+User_Model = settings.AUTH_USER_MODEL
 
 
 class ComplaintCategory(models.Model):
@@ -30,3 +33,20 @@ class Complaint(models.Model):
 
     def __str__(self):
         return self.user.get_display_name
+
+    @property
+    def get_absolute_url(self):
+        return reverse_lazy("complaints:update", kwargs={"pk": self.id})
+
+    @property
+    def get_delete_url(self):
+        return reverse_lazy("complaints:delete", kwargs={"pk": self.id})
+
+    @property
+    def get_status(self):
+        return self.get_status_display
+
+    @property
+    def get_display_text(self):
+        return self.user.get_display_name
+

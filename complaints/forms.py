@@ -15,10 +15,3 @@ class ComplaintUpdateForm(forms.ModelForm):
     class Meta:
         model = Complaint
         fields = ('category', 'details')
-
-
-class ComplaintDeleteForm(forms.ModelForm):
-
-    class Meta:
-        model = Complaint
-        fields = ('category', 'details')

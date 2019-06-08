@@ -5,8 +5,7 @@
 
 {% block body %}
 
-    <h2>Upload your file</h2>
-        <h1>{{ request.path }}</h1>
+        <h1>Status : {{ complaint.get_status }}</h1>
 
 
     <div class="container col-lg-4">
@@ -19,6 +18,8 @@
 
             <input class="btn btn-info" value="Submit" type="submit"/>
         </form>
+
+        <a href="{{ complaint.get_delete_url }}"><button class="btn btn-danger">Delete</button></a>
 
         <p>Create new account ! <a href="{% url 'portal:home' %}">Home</a></p>
 

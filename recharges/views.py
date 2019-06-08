@@ -27,7 +27,7 @@ from payments.views import create_payment
 
 @login_required
 def create_with_offer_pack(request, offer_pack_id):
-    offer_pack = get_object_or_404(OfferPack, id=offer_pack_id, active=True)
+    offer_pack = get_object_or_404(OfferPack, id=offer_pack_id, is_active=True)
     recharge = Recharge.objects.create(wallet=request.user.get_wallet, pack=offer_pack)
     return create_payment(request, recharge)
 

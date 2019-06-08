@@ -9,7 +9,7 @@ app_name = "accounts"
 
 urlpatterns = [
 
-    url(r"^profile/$", views.ProfileView.as_view(), name='profile'),
+    url(r"^profile/$", views.ProfileUpdateView.as_view(), name='profile_update'),
 
     url(r"^register/$", views.RegisterView.as_view(), name='register'),
     url(r"^otp/resend/$", views.otp_resend, name='otp_resend'),

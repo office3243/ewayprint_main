@@ -65,7 +65,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def get_display_name(self):
-        return self.get_full_name
+        return self.__str__()
 
     @property
     def get_first_name(self):
