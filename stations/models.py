@@ -1,11 +1,14 @@
 from django.db import models
-from simple_history.models import HistoricalRecords
 
 
 class StationClass(models.Model):
+    rate = models.ForeignKey('rates.Rate', on_delete=models.CASCADE)
     name = models.CharField(max_length=32)
     color_name = models.CharField(max_length=32, blank=True)
     color_hex_code = models.CharField(max_length=7, blank=True)
+    details = models.TextField(blank=True)
+
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
@@ -26,7 +29,7 @@ class Station(models.Model):
     embed_code = models.TextField(blank=True)
     details = models.TextField(blank=True)
 
-    history = HistoricalRecords()
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name

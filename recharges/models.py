@@ -15,7 +15,7 @@ class OfferPack(models.Model):
     price = models.DecimalField(max_digits=6, decimal_places=2)
     balance = models.DecimalField(max_digits=6, decimal_places=2)
     details = models.TextField(blank=True)
-    active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
     preference = models.PositiveSmallIntegerField(default=1)
 
     def __str__(self):
@@ -59,7 +59,7 @@ class Recharge(models.Model):
     def get_absolute_url(self):
         return reverse_lazy('recharges:detail', kwargs={'recharge_id': self.id})
 
-    def get_short_line(self):
+    def get_display_text(self):
         return self.__str__()
 
     def get_headline(self):

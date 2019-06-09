@@ -5,9 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.generic import DetailView
 from django.http import Http404
-
+from payments.views import create_payment
 import decimal
-
 
 
 @login_required
@@ -22,12 +21,11 @@ def recharge_failed(request, payment):
     return redirect("wallets:view")
 
 
-from payments.views import create_payment
 
 
 @login_required
 def create_with_offer_pack(request, offer_pack_id):
-    offer_pack = get_object_or_404(OfferPack, id=offer_pack_id, active=True)
+    offer_pack = get_object_or_404(OfferPack, id=offer_pack_id, is_active=True)
     recharge = Recharge.objects.create(wallet=request.user.get_wallet, pack=offer_pack)
     return create_payment(request, recharge)
 

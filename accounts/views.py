@@ -11,8 +11,10 @@ from . import alert_messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
+from django.urls import reverse_lazy
 
-USER_MODEL = get_user_model()
+
+USER_MODEL = settings.AUTH_USER_MODEL
 api_key = settings.API_KEY_2FA
 
 
@@ -131,11 +133,19 @@ class PasswordResetNewView(FormView):
             return redirect("accounts:password_reset_new")
 
 
-class ProfileView(LoginRequiredMixin, UpdateView):
+class ProfileUpdateView(LoginRequiredMixin, UpdateView):
 
     form_class = ProfileUpdateForm
-    template_name = "accounts/profile.html"
+    template_name = "accounts/profile_update.html"
+    model = USER_MODEL
+    success_url = reverse_lazy("accounts:profile_update")
 
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def form_valid(self, form):
+        messages.success(self.request, alert_messages.PROFILE_UPDATED_MESSAGE)
+        return super().form_valid(form)
 
 # class PasswordChange(LoginRequiredMixin, FormView):
 #     form_class = PasswordChangeForm
@@ -146,28 +156,3 @@ class ProfileView(LoginRequiredMixin, UpdateView):
 #         update_session_auth_hash(self.request, user)  # Important!
 #         messages.success(self.request, alert_messages.PASSWORD_CHANGED_SUCCESS_MESSAGE)
 #         return redirect('portal:home')
-
-
-# def otp_verify(request):
-#     if request.method == "POST":
-#         user_otp = request.POST['otp']
-#         url = "http://2factor.in/API/V1/{0}/SMS/VERIFY/{1}/{2}".format(api_key, request.session['user_session_data'], user_otp)
-#         response = requests.request("GET", url)
-#         data = response.json()
-#         user_session = UserSession.objects.get(uuid=request.session["user_session_uuid"])
-#         user = user_session.user
-#         if data['Status'] == "Success":
-#             user.is_active = True
-#             user.phone_verified = True
-#             user.save()
-#             del request.session['user_session_uuid']
-#             del request.session['user_session_data']
-#             user_session.delete()
-#             messages.success(request, alert_messages.REGISTERATION_SUCCESS_MESSAGE)
-#             login(request, user)
-#             return redirect("portal:home")
-#         else:
-#             messages.warning(request, alert_messages.OTP_INCORRECT_MESSAGE)
-#             return render(request, "accounts/otp_verify.html")
-#     else:
-#         return render(request, "accounts/otp_verify.html")

@@ -9,7 +9,9 @@
         <h1>My Transactions | {{ user }}</h1>
         <br><br>
 
-        <table class="table table-hover">
+        {% if transactions %}
+
+            <table class="table table-hover">
             <tr class="info">
                 <td>Name</td>
                 <td>File</td>
@@ -24,18 +26,34 @@
                     <td>{{ transaction }}</td>
                     <td><a href="{{transaction.file_name }}">{{ transaction.file }}</a></td>
                     <td>{{ transaction.amount }}</td>
-                    <td>{{ transaction.pay_mode }}</td>
-                    <td>{{ transaction.printed }}</td>
+                    <td>{{ transaction.payment_mode }}</td>
+                    <td>{{ transaction.is_printed }}</td>
                     <td>
-                        {% if transaction.printed == False %}
-                            <a href="#"><button class="btn btn-danger">Delete</button></a>
+                        <a href="{{ transaction.get_absolute_url }}"><button class="btn btn-primary">View</button></a>
+                    </td>
+                    <td>
+                        {% if not transaction.is_printed %}
+                            <form method="post" action="{{ transaction.get_delete_url }}">
+                                {% csrf_token %}
+                                <button class="btn btn-danger" type="submit">Delete</button>
+                            </form>
                         {% else %}
-                            <button class="btn btn-primary">&nbsp;View&nbsp;</button>
+                            <form method="post" action="{{ transaction.get_hide_url }}">
+                                {% csrf_token %}
+                                <button class="btn btn-danger" type="submit">Hide</button>
+                            </form>
                         {% endif %}
                     </td>
                 </tr>
             {% endfor %}
         </table>
+
+        {% else %}
+            <h4>No Transactions Yet</h4>
+
+        {% endif %}
+
+
     </div>
 
     <p><a href="{% url 'portal:home' %}">Home</a></p>

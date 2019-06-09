@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.views.generic import View, CreateView
+from django.views.generic import View, CreateView, DetailView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import TransactionAddForm
 from django.urls import reverse_lazy
@@ -9,6 +9,7 @@ from django.views.generic import TemplateView, ListView
 from django.http import Http404, HttpResponse
 from django.contrib import messages
 from django.conf import settings
+from . import alert_messages
 
 
 def generate_four_digit_otp():
@@ -35,7 +36,7 @@ class TransactionAddView(LoginRequiredMixin, CreateView):
         if form.instance.payment_mode == "AC":
             if form.instance.amount > self.request.user.wallet.balance:
                 messages.warning(self.request, settings.INSUFFICIENT_BALANCE_MESSAGE)
-                return redirect("wallet:view")
+                return redirect("wallets:view")
             else:
                 self.request.user.deduct_amount(form.instance.amount)
 
@@ -57,10 +58,72 @@ class TransactionListView(LoginRequiredMixin, ListView):
 
     model = Transaction
     template_name = 'transactions/list.html'
+    context_object_name = 'transactions'
 
     def get_queryset(self, *args, **kwargs):
-        qs = super().get_queryset().filter(user=self.request.user)
+        qs = super().get_queryset().filter(user=self.request.user, is_hidden=False)
         return qs
 
-    def get_context_object_name(self, object_list):
-        return "transactions"
+
+class TransactionDetailView(LoginRequiredMixin, DetailView):
+    model = Transaction
+    template_name = "transactions/detail.html"
+    context_object_name = "transaction"
+    slug_url_kwarg = "uuid"
+    slug_field = "uuid"
+
+    def get_object(self, queryset=None):
+        transaction = super().get_object()
+        if transaction.user == self.request.user:
+            return transaction
+        else:
+            raise Http404("No Transaction Found")
+
+#
+# class TransactionDeleteView(LoginRequiredMixin, View):
+#
+#     def get(self):
+#         return redirect("portal:home")
+
+
+class TransactionDeleteView(LoginRequiredMixin, DeleteView):
+    template_name = "transactions/delete.html"
+    model = Transaction
+    success_url = reverse_lazy('transactions:list')
+    context_object_name = "transaction"
+    slug_url_kwarg = "uuid"
+    slug_field = "uuid"
+
+    def get_object(self, queryset=None):
+        transaction = super().get_object()
+        if transaction.user == self.request.user and not transaction.is_printed:
+            return transaction
+        else:
+            raise Http404("No Transaction Found")
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, alert_messages.TRANSACTION_DELETED_MESSGAE)
+        return super().delete(request, *args, **kwargs)
+
+
+class TransactionHideView(LoginRequiredMixin, DeleteView):
+    template_name = "transactions/hide.html"
+    model = Transaction
+    success_url = reverse_lazy('transactions:list')
+    context_object_name = "transaction"
+    slug_url_kwarg = "uuid"
+    slug_field = "uuid"
+
+    def get_object(self, queryset=None):
+        transaction = super().get_object()
+        if transaction.user == self.request.user and transaction.is_printed and not transaction.is_hidden:
+            return transaction
+        else:
+            raise Http404("No Transaction Found")
+
+    def delete(self, request, *args, **kwargs):
+        transaction = self.get_object()
+        transaction.is_hidden = True
+        transaction.save()
+        messages.success(self.request, alert_messages.TRANSACTION_HIDEED_MESSGAE)
+        return redirect(self.success_url)

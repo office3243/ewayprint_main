@@ -18,6 +18,10 @@ class Wallet(models.Model):
         return self.recharge_set.filter(status="SC")
 
     @property
+    def get_failed_recharges(self):
+        return self.recharge_set.filter(status="FL")
+
+    @property
     def get_hold_recharges(self):
         return self.recharge_set.filter(status="HD")
 

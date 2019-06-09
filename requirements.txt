@@ -4,3 +4,9 @@ django-crispy-forms
 paywix
 requests
 django-simple-history
+django-extensions
+pyparsing
+pydot
+graphviz
+pydot-ng
+Werkzeug

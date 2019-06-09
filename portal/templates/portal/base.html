@@ -19,7 +19,7 @@
     <link href="{% static "portal/css/style.css" %}" rel="stylesheet">
 </head>
 
-<body>
+<body class="bg">
     {% if messages %}
         {% for meesage in messages %}
             <span class="alert btn-block alert-{{ meesage.tags }}">{{ meesage }}</span>

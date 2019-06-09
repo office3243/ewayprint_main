@@ -5,21 +5,6 @@
 
 {% block body %}
 
-    <h2>Upload your file</h2>
-
-    <div class="container col-lg-4">
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-
-
-            {{ form|crispy }}
-
-
-            <input class="btn btn-info" value="Get Otp" type="submit"/>
-        </form>
-
-        <p>Create new account ! <a href="{% url 'portal:home' %}">Home</a></p>
-
-    </div>
+    <h2>{{ transaction.id }}</h2>
 
 {% endblock %}

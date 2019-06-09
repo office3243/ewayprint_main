@@ -13,12 +13,12 @@ class Dealer(models.Model):
     date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
 
     def __str__(self):
-        return self.get_display_name
+        return self.get_display_text
 
     @property
     def get_full_name(self):
         return "{} {}".format(self.first_name, self.last_name)
 
     @property
-    def get_display_name(self):
+    def get_display_text(self):
         return self.get_full_name
