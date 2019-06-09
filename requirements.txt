@@ -3,3 +3,4 @@ pillow
 django-crispy-forms
 paywix
 requests
+django-simple-history

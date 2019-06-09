@@ -1,4 +1,5 @@
 from django.db import models
+from simple_history.models import HistoricalRecords
 
 
 class StationClass(models.Model):
@@ -24,6 +25,8 @@ class Station(models.Model):
     city = models.CharField(max_length=32, blank=True)
     embed_code = models.TextField(blank=True)
     details = models.TextField(blank=True)
+
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.name
