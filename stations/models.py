@@ -28,9 +28,16 @@ class Station(models.Model):
     city = models.CharField(max_length=32, blank=True)
     embed_code = models.TextField(blank=True)
     details = models.TextField(blank=True)
+    link = models.TextField(blank=True)
 
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
 
+    @property
+    def get_link(self):
+        if self.link:
+            return self.link
+        else:
+            return "-"

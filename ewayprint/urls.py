@@ -26,7 +26,6 @@ urlpatterns = [
     url(r'^payments/', include('payments.urls', namespace='payments')),
     url(r'^recharges/', include('recharges.urls', namespace='recharges')),
     url(r'^complaints/', include('complaints.urls', namespace='complaints')),
-
-    # url(r'^stations/', include('stations.urls', namespace='stations')),
+    url(r'^stations/', include('stations.urls', namespace='stations')),
 
 ]

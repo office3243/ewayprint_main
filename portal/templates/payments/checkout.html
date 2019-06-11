@@ -1,13 +1,8 @@
 <html>
-  <head onload="submitPayuForm()">
+  <head>
   <script type="text/javascript">
-    var hash = "{{ hashh }}";
-    function submitPayuForm() {
-      if(hash =='') {
-        return;
-      }
-      var payuForm = document.forms.payuForm;
-      payuForm.submit();
+      window.onload =function submitPayuForm() {
+      document.forms.payuForm.submit();
     }
   </script>
   </head>

@@ -13,6 +13,14 @@ import uuid
 payu = PAYU()
 
 
+payu_details = {
+    'first_name': "Eway Print",
+    "email": "ewayprint.inc@gmail.com",
+    "phone": "9028116344",
+}
+
+
+@login_required
 def create_payment(request, recharge):
     # hash_object = hashlib.sha256(b'randint(0,20)')
     # txnid = hash_object.hexdigest()[0:20]
@@ -22,8 +30,8 @@ def create_payment(request, recharge):
                                                amount=payment_data.get('amount'),
                                                product_info=payment_data.get('productinfo'),
                                                recharge=recharge)
-    payment_data.update({"txnid": txnid, 'firstname': recharge.get_firstname,
-                         'email': recharge.get_email, 'phone': recharge.get_phone})
+    payment_data.update({"txnid": txnid})
+    payment_data.update(payu_details)
     payu_data = payu.initate_transaction(payment_data)
     return render(request, 'payments/checkout.html', {"posted": payu_data})
 

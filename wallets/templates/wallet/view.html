@@ -22,7 +22,8 @@
             <div class="col-lg-3 info-color">
                 <h4>{{ offer_pack.name }}</h4>
                 <p>{{ offer_pack.headline }}</p>
-                <a href="{{ offer_pack.get_make_recharge_url }}" class="btn blue-gradient">Recharge</a>
+{#                <a href="{{ offer_pack.get_make_recharge_url }}" class="btn blue-gradient">Recharge</a>#}
+                <a href="{{ offer_pack.get_absolute_url }}" class="btn blue-gradient">Recharge</a>
             </div>
         {% endfor %}
     {% else %}

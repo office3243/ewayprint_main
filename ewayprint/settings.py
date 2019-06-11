@@ -173,8 +173,6 @@ PAYU_SUCCESS_URL = "http://127.0.0.1:8000/payments/success/"
 PAYU_FAILURE_URL = "http://127.0.0.1:8000/payments/failure/"
 
 
-
-
 GRAPH_MODELS = {
   'all_applications': True,
   'group_models': True,

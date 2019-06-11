@@ -33,7 +33,6 @@ class PasswordResetForm(forms.Form):
 class PasswordResetNewForm(forms.Form):
 
     otp = forms.IntegerField()
-    # otp = forms.IntegerField(widget=forms.NumberInput(attrs={"data-format": "dddddd"}))
     password1 = forms.CharField(widget=forms.PasswordInput)
     password2 = forms.CharField(widget=forms.PasswordInput)
 

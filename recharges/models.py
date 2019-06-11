@@ -25,6 +25,10 @@ class OfferPack(models.Model):
     def get_make_recharge_url(self):
         return reverse_lazy('recharges:create_with_offer_pack', kwargs={'offer_pack_id': self.id})
 
+    @property
+    def get_absolute_url(self):
+        return reverse_lazy("recharges:offer_pack_detail", kwargs={"offer_pack_id": self.id})
+
     objects = OfferPackManager()
 
 
