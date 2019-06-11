@@ -3,7 +3,7 @@ from django.conf import settings
 
 
 class Wallet(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     balance = models.DecimalField(max_digits=6, decimal_places=2, default=0.00)
 
     def __str__(self):

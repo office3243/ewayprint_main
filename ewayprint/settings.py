@@ -140,7 +140,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-API_KEY_2FA = "c9ef2a2e-806a-11e9-ade6-0200cd936042"
+API_KEY_2FA = "4c35655f-8b8c-11e9-ade6-0200cd936042"
 
 AUTH_USER_MODEL = 'accounts.User'
 

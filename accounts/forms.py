@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import password_validation
 from django.contrib.auth import get_user_model
 
-USER_MODEL = get_user_model()
+USER_MODEL = User
 
 
 class CustomLoginForm(AuthenticationForm):
@@ -33,6 +33,7 @@ class PasswordResetForm(forms.Form):
 class PasswordResetNewForm(forms.Form):
 
     otp = forms.IntegerField()
+    # otp = forms.IntegerField(widget=forms.NumberInput(attrs={"data-format": "dddddd"}))
     password1 = forms.CharField(widget=forms.PasswordInput)
     password2 = forms.CharField(widget=forms.PasswordInput)
 
@@ -40,7 +41,7 @@ class PasswordResetNewForm(forms.Form):
         password1 = self.cleaned_data.get('password1')
         password2 = self.cleaned_data.get('password2')
 
-        if password1==password2:
+        if password1 == password2:
             return self.cleaned_data
         else:
             raise ValidationError("Both password must be same.")
@@ -59,7 +60,7 @@ class PasswordResetNewForm(forms.Form):
 
 
 class OTPForm(forms.Form):
-    otp = forms.IntegerField()
+    otp = forms.IntegerField(widget=forms.NumberInput(attrs={"length": 6}))
 
     class Meta:
         fields = ('otp', )
@@ -69,4 +70,4 @@ class ProfileUpdateForm(forms.ModelForm):
 
     class Meta:
         model = USER_MODEL
-        fields = ('first_name', 'last_name', 'city', )
+        fields = ('first_name', 'last_name', 'email', 'city', )

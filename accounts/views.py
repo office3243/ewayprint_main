@@ -12,14 +12,41 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
 from django.urls import reverse_lazy
+from accounts.models import User
+from django.shortcuts import get_object_or_404
 
 
-USER_MODEL = settings.AUTH_USER_MODEL
-api_key = settings.API_KEY_2FA
+USER_MODEL = User
+api_key_2fa = settings.API_KEY_2FA
+
+
+def send_otp_2fa(request, phone):
+    if 'user_session_data' in request.session:
+        del request.session['user_session_data']
+    url = "http://2factor.in/API/V1/{api_key_2fa}/SMS/{phone}/AUTOGEN/OTPSEND".format(api_key_2fa=api_key_2fa,
+                                                                                      phone=phone)
+    response = requests.request("GET", url)
+    data = response.json()
+    request.session['user_session_data'] = data['Details']
+    return True
+
+
+def otp_generate(request, user):
+    request.session["user_session_uuid"] = str(user.uuid)
+    send_otp_2fa(request, user.phone)
+    messages.info(request, alert_messages.REGISTERATION_OTP_SENT_MESSAGE)
+    return redirect("accounts:otp_verify")
+
+
+def password_reset_otp_generate(request, user):
+    request.session["user_session_uuid"] = str(user.uuid)
+    send_otp_2fa(request, user.phone)
+    messages.info(request, alert_messages.PASSWORD_RESET_OTP_SENT_MESSAGE)
+    return redirect("accounts:password_reset_new")
 
 
 def check_otp_2fa(otp, otp_session_data):
-    url = "http://2factor.in/API/V1/{0}/SMS/VERIFY/{1}/{2}".format(api_key,
+    url = "http://2factor.in/API/V1/{0}/SMS/VERIFY/{1}/{2}".format(api_key_2fa,
                                                                    otp_session_data, otp)
     response = requests.request("GET", url)
     data = response.json()
@@ -32,21 +59,21 @@ class RegisterView(FormView):
 
     def form_valid(self, form):
         new_user = form.save()
-        return new_user.otp_generate(self.request)
+        return otp_generate(self.request, user=new_user)
 
 
 def otp_resend(request):
     try:
-        user = USER_MODEL.objects.get(uuid=request.session.get("user_session_uuid"))
-        return user.otp_generate(request)
+        user = get_object_or_404(USER_MODEL, uuid=request.session.get('user_session_uuid'))
+        return otp_generate(request, user=user)
     except USER_MODEL.DoesNotExist:
         raise Http404("Bad Request")
 
 
 def password_reset_otp_resend(request):
     try:
-        user = USER_MODEL.objects.get(uuid=request.session.get("user_session_uuid"))
-        return user.password_reset_otp_generate(request)
+        user = get_object_or_404(USER_MODEL, uuid=request.session.get('user_session_uuid'))
+        return password_reset_otp_generate(request, user=user)
     except USER_MODEL.DoesNotExist:
         raise Http404("Bad Request")
 
@@ -58,8 +85,8 @@ class OTPVerifyView(FormView):
 
     def post(self, request, *args, **kwargs):
         otp = request.POST['otp']
-        user = USER_MODEL.objects.get(uuid=request.session["user_session_uuid"])
-        otp_match = check_otp_2fa(otp=otp, otp_session_data=request.session['user_session_data'])
+        user = get_object_or_404(USER_MODEL, uuid=request.session.get('user_session_uuid'))
+        otp_match = check_otp_2fa(otp=otp, otp_session_data=request.session.get('user_session_data'))
         if otp_match:
             user.make_phone_verified_and_active()
             del request.session['user_session_uuid']
@@ -100,9 +127,10 @@ class PasswordResetView(FormView):
         try:
             user = USER_MODEL.objects.get(phone=phone)
             if user.is_active:
-                return user.password_reset_otp_generate(self.request)
+                return password_reset_otp_generate(self.request, user=user)
             else:
-                messages.warning(self, alert_messages.USER_NON_ACTIVE_MESSAGE)
+                messages.warning(self.request, alert_messages.USER_NON_ACTIVE_MESSAGE)
+                return redirect("accounts:password_reset")
         except USER_MODEL.DoesNotExist:
             messages.warning(self.request, alert_messages.PHONE_NOT_REGISTERED_MESSAGE)
             return redirect("accounts:password_reset")
@@ -116,8 +144,7 @@ class PasswordResetNewView(FormView):
     def form_valid(self, form):
         otp = form.cleaned_data.get('otp')
         password1 = form.cleaned_data.get('password1')
-        password2 = form.cleaned_data.get('password2')
-        user = USER_MODEL.objects.get(uuid=self.request.session["user_session_uuid"])
+        user = get_object_or_404(USER_MODEL, uuid=self.request.session.get('user_session_uuid'))
 
         otp_match = check_otp_2fa(otp=otp, otp_session_data=self.request.session['user_session_data'])
         if otp_match:

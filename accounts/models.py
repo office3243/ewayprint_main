@@ -4,7 +4,6 @@ from django.db import models
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.utils.translation import ugettext_lazy as _
-
 from .managers import UserManager
 from .validators import phone_number_validator
 from django.conf import settings
@@ -14,23 +13,14 @@ from django.contrib import messages
 from . import alert_messages
 from wallets.models import Wallet
 from django.db.models.signals import post_save
+from django.core.exceptions import ValidationError
 
 api_key_2fa = settings.API_KEY_2FA
 
 
-def send_otp_2fa(request, phone):
-    if 'user_session_data' in request.session:
-        del request.session['user_session_data']
-    url = "http://2factor.in/API/V1/{api_key}/SMS/{phone}/AUTOGEN/OTPSEND".format(api_key=api_key_2fa, phone=phone)
-    response = requests.request("GET", url)
-    data = response.json()
-    request.session['user_session_data'] = data['Details']
-    return True
-
-
 class User(AbstractBaseUser, PermissionsMixin):
     phone = models.CharField(_('phone number'), max_length=13, validators=[phone_number_validator, ], unique=True)
-    email = models.EmailField(_('email address'), blank=True)
+    email = models.EmailField(_('email address'), blank=True, )
 
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
 
@@ -82,18 +72,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.is_active = True
         self.phone_verified = True
         self.save()
-
-    def otp_generate(self, request):
-        request.session["user_session_uuid"] = str(self.uuid)
-        send_otp_2fa(request, self.phone)
-        messages.info(request, alert_messages.REGISTERATION_OTP_SENT_MESSAGE)
-        return redirect("accounts:otp_verify")
-
-    def password_reset_otp_generate(self, request):
-        request.session["user_session_uuid"] = str(self.uuid)
-        send_otp_2fa(request, self.phone)
-        messages.info(request, alert_messages.PASSWORD_RESET_OTP_SENT_MESSAGE)
-        return redirect("accounts:password_reset_new")
 
 
 def create_wallet(instance, sender, *args, **kwargs):
