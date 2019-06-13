@@ -5,6 +5,7 @@ import datetime
 from django.db.models.signals import post_save
 import uuid
 from django.urls import reverse_lazy
+from .managers import TransactionManager
 
 
 USER_MODEL = settings.AUTH_USER_MODEL
@@ -44,6 +45,8 @@ class Transaction(models.Model):
     is_permitted = models.BooleanField(default=True)
 
     details = models.TextField(blank=True)
+
+    objects = TransactionManager
 
     def __str__(self):
         return str(self.user)

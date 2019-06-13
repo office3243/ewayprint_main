@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.http import Http404
 
 
 class Wallet(models.Model):
@@ -28,6 +29,13 @@ class Wallet(models.Model):
     @property
     def get_user(self):
         return self.user
+
+    def deduct_amount(self, amount):
+        if not self.balance < amount:
+            self.balance -= amount
+            self.save()
+        else:
+            raise Http404("Insufficient Balance")
 
 
 

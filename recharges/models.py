@@ -5,6 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse_lazy
 from django.conf import settings
 from .managers import OfferPackManager, RechargeManager
+from django.http import Http404
 
 USER_MODEL = settings.AUTH_USER_MODEL
 
@@ -78,6 +79,7 @@ class Recharge(models.Model):
     @property
     def get_user(self):
         return self.get_wallet.get_user
+
 
     @property
     def get_wallet(self):

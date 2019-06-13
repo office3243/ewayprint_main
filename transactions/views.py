@@ -38,8 +38,7 @@ class TransactionAddView(LoginRequiredMixin, CreateView):
                 messages.warning(self.request, settings.INSUFFICIENT_BALANCE_MESSAGE)
                 return redirect("wallets:view")
             else:
-                self.request.user.deduct_amount(form.instance.amount)
-
+                self.request.user.wallet.deduct_amount(form.instance.amount)
         otp_1, otp_2 = check_unique_otps()
         form.instance.otp_1 = otp_1
         form.instance.otp_2 = otp_2
@@ -102,7 +101,14 @@ class TransactionDeleteView(LoginRequiredMixin, DeleteView):
             raise Http404("No Transaction Found")
 
     def delete(self, request, *args, **kwargs):
-        messages.success(self.request, alert_messages.TRANSACTION_DELETED_MESSGAE)
+        transaction = self.get_object()
+        if transaction.payment_mode == "AC":
+            message = alert_messages.TRANSACTION_DELETED_WITH_REFUND_MESSGAE.format(transaction.amount)
+            transaction.user.wallet.balance += transaction.amount
+            transaction.user.wallet.save()
+            messages.success(self.request, message)
+        else:
+            messages.success(self.request, alert_messages.TRANSACTION_DELETED_MESSGAE)
         return super().delete(request, *args, **kwargs)
 
 
