@@ -12,41 +12,39 @@
         {% if transactions %}
 
             <table class="table table-hover">
-            <tr class="info">
-                <td>Name</td>
-                <td>File</td>
-                <td>Amount</td>
-                <td>Payment Mode</td>
-                <td>Printed</td>
-                <td>Actions</td>
-            </tr>
-
-            {% for transaction in transactions %}
-                <tr>
-                    <td>{{ transaction }}</td>
-                    <td><a href="{{transaction.file_name }}">{{ transaction.file }}</a></td>
-                    <td>{{ transaction.amount }}</td>
-                    <td>{{ transaction.payment_mode }}</td>
-                    <td>{{ transaction.is_printed }}</td>
-                    <td>
-                        <a href="{{ transaction.get_absolute_url }}"><button class="btn btn-primary">View</button></a>
-                    </td>
-                    <td>
-                        {% if not transaction.is_printed %}
-                            <form method="post" action="{{ transaction.get_delete_url }}">
-                                {% csrf_token %}
-                                <button class="btn btn-danger" type="submit">Delete</button>
-                            </form>
-                        {% else %}
-                            <form method="post" action="{{ transaction.get_hide_url }}">
-                                {% csrf_token %}
-                                <button class="btn btn-danger" type="submit">Hide</button>
-                            </form>
-                        {% endif %}
-                    </td>
+                <tr class="info">
+                    <td>Sr</td>
+                    <td>Name</td>
+                    <td>Amount</td>
+                    <td>Payment Mode</td>
+                    <td>Printed</td>
+                    <td>Actions</td>
                 </tr>
-            {% endfor %}
-        </table>
+
+                {% for transaction in transactions %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td><a href="{{transaction.get_absolute_url }}">{{ transaction.get_display_text }}</a></td>
+                        <td>{{ transaction.amount }}</td>
+                        <td>{{ transaction.payment_mode }}</td>
+                        <td>{{ transaction.is_printed }}</td>
+
+                        <td>
+                            {% if not transaction.is_printed %}
+                                <form method="post" action="{{ transaction.get_delete_url }}">
+                                    {% csrf_token %}
+                                    <button class="btn btn-danger" type="submit">Delete</button>
+                                </form>
+                            {% else %}
+                                <form method="post" action="{{ transaction.get_hide_url }}">
+                                    {% csrf_token %}
+                                    <button class="btn btn-danger" type="submit">Hide</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
 
         {% else %}
             <h4>No Transactions Yet</h4>

@@ -5,28 +5,33 @@
 
 {% block body %}
 
-    <h2>Upload your file</h2>
-        <h1>{{ request.path }}</h1>
+    <div class="container jumbotron text-center bg-transparent">
+
+        <h2>Upload your file</h2>
 
 
-    <div class="container col-lg-4">
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
+            <div class="container col-lg-4">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
 
 
-            {{ form|crispy }}
+                    {{ form|crispy }}
 
 
-                        <input style="float: left;" class="btn btn-info" value="pay from wallet" type="submit"/>
-            <input class="btn btn-info" value="pay on station " type="submit"/>
+                                <input style="float: left;" class="btn btn-info" value="pay from wallet" type="submit"/>
+                    <input class="btn btn-info" value="pay on station " type="submit"/>
 
-<br><br>
+                    <br><br>
 
-            <input class="btn btn-info" value="Get Otp" type="submit"/>
-        </form>
+                    <input class="btn btn-info" value="Get Otp" type="submit"/>
+                </form>
 
-        <p>Create new account ! <a href="{% url 'portal:home' %}">Home</a></p>
+                <p>Create new account ! <a href="{% url 'portal:home' %}">Home</a></p>
+
+            </div>
+
 
     </div>
+
 
 {% endblock %}

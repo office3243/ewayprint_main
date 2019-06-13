@@ -111,6 +111,10 @@ class TransactionDeleteView(LoginRequiredMixin, DeleteView):
             messages.success(self.request, alert_messages.TRANSACTION_DELETED_MESSGAE)
         return super().delete(request, *args, **kwargs)
 
+    # def delete(self, request, *args, **kwargs):
+    #     messages.success(self.request, alert_messages.TRANSACTION_DELETED_MESSGAE)
+    #     return super().delete(request, *args, **kwargs)
+    #
 
 class TransactionHideView(LoginRequiredMixin, DeleteView):
     template_name = "transactions/hide.html"

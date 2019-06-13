@@ -4,17 +4,23 @@
 {% block title %}Home{% endblock %}
 
 {% block body %}
-    <h2>{{ user.get_display_text }}</h2>
 
-    <form method="post">
+    <div class="text-center jumbotron container">
 
-        {% csrf_token %}
+        <h2>{{ user.get_display_text }}</h2>
 
-        {{ form|crispy }}
+        <form method="post">
 
-        <input type="submit" value="Update" class="btn btn-success">
+            {% csrf_token %}
 
-    </form>
+            {{ form|crispy }}
+
+            <input type="submit" value="Update" class="btn btn-success">
+
+        </form>
+
+
+    </div>
 
 
 {% endblock %}

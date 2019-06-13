@@ -2,10 +2,12 @@ from __future__ import unicode_literals
 from django.db import models
 from django.conf import settings
 import datetime
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_delete, post_delete
 import uuid
 from django.urls import reverse_lazy
 from .managers import TransactionManager
+from django.contrib import messages
+from . import alert_messages
 
 
 USER_MODEL = settings.AUTH_USER_MODEL
@@ -28,7 +30,7 @@ class Transaction(models.Model):
     payment_mode = models.CharField(max_length=2, choices=PAYMENT_MODE_CHOICES)
     color_model = models.CharField(max_length=2, default='BW', choices=COLOR_MODEL_CHOICES)
     copies = models.PositiveSmallIntegerField(default=1)
-    station_class = models.ForeignKey('stations.StationClass', on_delete=models.CASCADE)
+    station_class = models.ForeignKey('stations.StationClass', on_delete=models.CASCADE, default=1)
 
     amount = models.DecimalField(decimal_places=2, max_digits=5)
     pages = models.PositiveSmallIntegerField()
@@ -44,7 +46,7 @@ class Transaction(models.Model):
 
     is_permitted = models.BooleanField(default=True)
 
-    details = models.TextField(blank=True)
+    refrence = models.CharField(max_length=64, blank=True)
 
     objects = TransactionManager
 
@@ -63,6 +65,13 @@ class Transaction(models.Model):
     def get_hide_url(self):
         return reverse_lazy("transactions:hide", kwargs={"uuid": self.uuid})
 
+    @property
+    def get_display_text(self):
+        if self.refrence:
+            return self.refrence
+        else:
+            return self.file.name[-30:]
+
 
 def assign_amount(sender, instance, *args, **kwargs):
     if instance.color_model == "BW":
@@ -73,5 +82,16 @@ def assign_amount(sender, instance, *args, **kwargs):
         instance.amount = amount
         instance.save()
 
+#
+# def refund_amount(sender, instance, *args, **kwargs):
+#     if instance.is_permitted and not instance.is_printed and instance.payment_mode == "AC":
+#         instance.user.wallet.balance += instance.amount
+#         instance.user.wallet.save()
+#         instance.is_permitted = False
+#         instance.save()
+#         instance.delete()
+#
+#
+# pre_delete.connect(refund_amount, sender=Transaction)
 
 post_save.connect(assign_amount, sender=Transaction)
