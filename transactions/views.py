@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import View, CreateView, DetailView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import TransactionAddForm
@@ -6,10 +6,14 @@ from django.urls import reverse_lazy
 import random
 from .models import Transaction
 from django.views.generic import TemplateView, ListView
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.contrib import messages
 from django.conf import settings
 from . import alert_messages
+from stations.models import Station
+from django.utils import timezone
+from stations.models import Station, StationClass
+import json
 
 
 def generate_four_digit_otp():
@@ -30,6 +34,12 @@ class TransactionAddView(LoginRequiredMixin, CreateView):
     form_class = TransactionAddForm
     template_name = 'transactions/add.html'
     success_url = reverse_lazy('portal:home')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        rates_dict = StationClass.objects.first().rate.get_rates_dict
+        context['rates_dict'] = json.dumps(rates_dict)
+        return context
 
     def form_valid(self, form):
 
@@ -116,6 +126,7 @@ class TransactionDeleteView(LoginRequiredMixin, DeleteView):
     #     return super().delete(request, *args, **kwargs)
     #
 
+
 class TransactionHideView(LoginRequiredMixin, DeleteView):
     template_name = "transactions/hide.html"
     model = Transaction
@@ -137,3 +148,21 @@ class TransactionHideView(LoginRequiredMixin, DeleteView):
         transaction.save()
         messages.success(self.request, alert_messages.TRANSACTION_HIDEED_MESSGAE)
         return redirect(self.success_url)
+
+
+def get_print(request, otp_1, otp_2, station_code):
+    station = get_object_or_404(Station, station_code=station_code)
+    transaction = Transaction.objects.get(otp_1=otp_1, otp_2=otp_2)
+    try:
+        file_printed = transaction.printed
+        python_dict = {'otp_found': True, 'file_printed': file_printed, 'color_model': transaction.color_model,
+                       'amount': transaction.amount, 'payment_mode': transaction.payment_mode, 'file_path': transaction.file.url}
+        transaction.file_printed = True
+        transaction.printed_station = station
+        transaction.printed_on = timezone.now()
+        transaction.save()
+        return JsonResponse(python_dict, safe=False)
+    except transaction.DoesNotExist:
+        return JsonResponse({'otp_found': False})
+
+

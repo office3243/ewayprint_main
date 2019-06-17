@@ -10,3 +10,7 @@ class Rate(models.Model):
 
     def __str__(self):
         return "bw : {} - color : {}".format(self.bw_rate, self.color_rate)
+
+    @property
+    def get_rates_dict(self):
+        return {"bw_rate": float(self.bw_rate), "color_rate": float(self.color_rate)}

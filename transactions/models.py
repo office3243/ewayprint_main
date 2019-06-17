@@ -8,17 +8,17 @@ from django.urls import reverse_lazy
 from .managers import TransactionManager
 from django.contrib import messages
 from . import alert_messages
+from django.core.validators import FileExtensionValidator
 
 
 USER_MODEL = settings.AUTH_USER_MODEL
 
 
-PAYMENT_MODE_CHOICES = (('AC', "Account"), ('CO', "Coin"))
-COLOR_MODEL_CHOICES = (('BW', 'Black&White'), ('CL', 'Colorful'))
-PAPER_TYPE_CHOICES = (('NM', 'Normal'), ('LT', 'Letter'), ('PP', "Photo Paper"))
-
-
 class Transaction(models.Model):
+
+    PAYMENT_MODE_CHOICES = (('AC', "Account"), ('CO', "Coin"))
+    COLOR_MODEL_CHOICES = (('BW', 'Black&White'), ('CL', 'Colorful'))
+    ALLOWED_FILE_TYPES = ("png", "jpg", "jpeg", "pdf")
 
     user = models.ForeignKey(USER_MODEL, on_delete=models.CASCADE)
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
@@ -26,7 +26,10 @@ class Transaction(models.Model):
     otp_1 = models.CharField(max_length=4)
     otp_2 = models.CharField(max_length=4)
 
-    file = models.FileField(upload_to="transactions/transaction_files/{}/".format(datetime.date.today()))
+    file = models.FileField(upload_to="transactions/transaction_files/{}/".format(datetime.date.today()),
+                            validators=[FileExtensionValidator(allowed_extensions=ALLOWED_FILE_TYPES), ]
+                            )
+
     payment_mode = models.CharField(max_length=2, choices=PAYMENT_MODE_CHOICES)
     color_model = models.CharField(max_length=2, default='BW', choices=COLOR_MODEL_CHOICES)
     copies = models.PositiveSmallIntegerField(default=1)
@@ -34,7 +37,6 @@ class Transaction(models.Model):
 
     amount = models.DecimalField(decimal_places=2, max_digits=5)
     pages = models.PositiveSmallIntegerField()
-    paper_type = models.CharField(max_length=2, default='NM', choices=PAPER_TYPE_CHOICES)
 
     created_on = models.DateTimeField(auto_now_add=True)
 
@@ -94,4 +96,32 @@ def assign_amount(sender, instance, *args, **kwargs):
 #
 # pre_delete.connect(refund_amount, sender=Transaction)
 
+
 post_save.connect(assign_amount, sender=Transaction)
+
+#
+# class File(models.Model):
+#
+#     FILE_TYPE_CHOICES = (('JPG', 'JPG'), ('PNG', 'PNG'), ('PDF', 'PDF'), ('TXT', 'TXT'))
+#
+#     input_file = models.FileField(upload_to="transactions/files/input_files/")
+#     converted_file = models.FileField(upload_to="transactions/files/converted_files/", blank=True, null=True)
+#
+#     file_type = models.CharField(max_length="3", choices=FILE_TYPE_CHOICES, blank=True)
+#
+#     @property
+#     def get_file_ext(self):
+#         return self.input_file.name[(self.input_file.name.rfind(".")+1):]
+#
+#
+#
+# def convert_file(instance, sender, *args, **kwargs):
+#     if not instance.input_file:
+#
+#
+#
+# def assign_file_type(sender, instance, *args, **kwargs):
+#     file_type = instance.get_file_ext
+#     if instance.file_type != file_type:
+#         instance.file_type = file_type
+#         instance.save()
