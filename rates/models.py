@@ -14,3 +14,6 @@ class Rate(models.Model):
     @property
     def get_rates_dict(self):
         return {"bw_rate": float(self.bw_rate), "color_rate": float(self.color_rate)}
+
+    def get_rate(self, color_model):
+        return self.bw_rate if color_model == "BW" else self.color_rate

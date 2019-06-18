@@ -76,10 +76,8 @@ class Transaction(models.Model):
 
 
 def assign_amount(sender, instance, *args, **kwargs):
-    if instance.color_model == "BW":
-        amount = instance.pages * instance.station_class.rate.bw_rate
-    else:
-        amount = instance.pages * instance.station_class.rate.color_rate
+    amount = instance.pages * instance.station_class.rate.get_rate(instance.color_model)
+
     if instance.amount != amount:
         instance.amount = amount
         instance.save()
@@ -125,3 +123,5 @@ post_save.connect(assign_amount, sender=Transaction)
 #     if instance.file_type != file_type:
 #         instance.file_type = file_type
 #         instance.save()
+
+

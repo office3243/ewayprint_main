@@ -43,20 +43,25 @@ class TransactionAddView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
 
+        rate = StationClass.objects.first().rate.get_rate(form.cleaned_data.get('color_model'))
+        pages = form.cleaned_data.get('pages')
+        copies = form.cleaned_data.get('copies')
+        amount = rate*pages*copies
+
         if form.instance.payment_mode == "AC":
-            if form.instance.amount > self.request.user.wallet.balance:
+            if amount > self.request.user.wallet.balance:
                 messages.warning(self.request, settings.INSUFFICIENT_BALANCE_MESSAGE)
                 return redirect("wallets:view")
             else:
-                self.request.user.wallet.deduct_amount(form.instance.amount)
+                self.request.user.wallet.deduct_amount(amount)
         otp_1, otp_2 = check_unique_otps()
         form.instance.otp_1 = otp_1
         form.instance.otp_2 = otp_2
         form.instance.user = self.request.user
+        form.instance.amount = amount
         form.save()
         return redirect('transactions:get_otp', otp_1=otp_1, otp_2=otp_2)
 
-    # def form_invalid(self, form):
 
 
 class GetOtpView(LoginRequiredMixin, TemplateView):

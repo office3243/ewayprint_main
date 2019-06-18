@@ -1,0 +1,47 @@
+/* color:
+pink #f5e1da
+grey #f1f1f1
+tealgreen #49beb7
+darkgreen #085f63 */
+
+body{
+    margin:0px;
+    padding:0px;
+}
+.tz-login-header{
+    padding-top: 10px;
+    height: 60px;
+    background-color: #49beb7;
+    color:white;
+}
+.tz-linkbtn{
+    background: transparent;
+    border: none;
+}
+.tz-loginbtn{
+    float:right;
+    padding-top: 13px;
+    padding-right: 3%;
+    color:white;
+}
+.tz-header-name{
+    font-size:32px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.tz-inp:focus{
+    -webkit-box-shadow: 0 1px 0 0 #49beb7 !important;
+    box-shadow: 0 1px 0 0 #49beb7 !important;
+    border-bottom: 1px solid #49beb7 !important;
+}
+.tz-inp:focus + .tz-lbl-color{
+    color:#49beb7 !important;
+}
+.tz-btn-submit{
+    background-color:#49beb7 !important;
+    border-radius: 6px;
+}
+.tz-linkbtncolorgrn{
+    color:#49beb7;
+}
