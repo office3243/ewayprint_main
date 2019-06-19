@@ -14,3 +14,5 @@ TRANSACTION_HIDEED_MESSGAE = "Transaction Hided Successfully"
 #   INFO
 
 #   WARNING
+
+FILE_HAS_ERROR_MESSAGE = "File hass errors or not supported."

@@ -140,6 +140,13 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+
 API_KEY_2FA = "4c35655f-8b8c-11e9-ade6-0200cd936042"
 
 AUTH_USER_MODEL = 'accounts.User'

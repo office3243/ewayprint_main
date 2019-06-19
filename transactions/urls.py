@@ -15,4 +15,6 @@ urlpatterns = [
 
     url(r'^getprint/(?P<otp_1>[0-9]+)/(?P<otp_2>[0-9]+)/(?P<station_code>.+)$', views.get_print, name='get_print'),
 
+    url(r'^file/convert/$', views.file_convert, name="file_convert")
+
 ]

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import View, CreateView, DetailView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .forms import TransactionAddForm
+from .forms import TransactionAddForm, FileAddForm
 from django.urls import reverse_lazy
 import random
 from .models import Transaction
@@ -61,7 +61,6 @@ class TransactionAddView(LoginRequiredMixin, CreateView):
         form.instance.amount = amount
         form.save()
         return redirect('transactions:get_otp', otp_1=otp_1, otp_2=otp_2)
-
 
 
 class GetOtpView(LoginRequiredMixin, TemplateView):
@@ -171,3 +170,12 @@ def get_print(request, otp_1, otp_2, station_code):
         return JsonResponse({'otp_found': False})
 
 
+def file_convert(request):
+    form = FileAddForm(request.POST or None, request.FILES or None)
+    if form.is_valid():
+        file = form.save()
+        if file.has_error:
+            messages.warning(request, alert_messages.FILE_HAS_ERROR_MESSAGE)
+        else:
+            return HttpResponse("file added successfully" + file.file_type)
+    return render(request, "transactions/file_convert.html", {'form': form})

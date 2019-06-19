@@ -1,5 +1,5 @@
 from django import forms
-from .models import Transaction
+from .models import Transaction, File
 
 
 class TransactionAddForm(forms.ModelForm):
@@ -11,3 +11,9 @@ class TransactionAddForm(forms.ModelForm):
         model = Transaction
         fields = ('file', 'pages', 'payment_mode', 'color_model', 'copies', 'refrence')
 
+
+class FileAddForm(forms.ModelForm):
+
+    class Meta:
+        model = File
+        fields = ("input_file", )

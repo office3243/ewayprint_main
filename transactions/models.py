@@ -9,6 +9,10 @@ from .managers import TransactionManager
 from django.contrib import messages
 from . import alert_messages
 from django.core.validators import FileExtensionValidator
+from . import converters
+
+
+media_path = settings.MEDIA_ROOT
 
 
 USER_MODEL = settings.AUTH_USER_MODEL
@@ -97,22 +101,67 @@ def assign_amount(sender, instance, *args, **kwargs):
 
 post_save.connect(assign_amount, sender=Transaction)
 
-#
-# class File(models.Model):
-#
-#     FILE_TYPE_CHOICES = (('JPG', 'JPG'), ('PNG', 'PNG'), ('PDF', 'PDF'), ('TXT', 'TXT'))
-#
-#     input_file = models.FileField(upload_to="transactions/files/input_files/")
-#     converted_file = models.FileField(upload_to="transactions/files/converted_files/", blank=True, null=True)
-#
-#     file_type = models.CharField(max_length="3", choices=FILE_TYPE_CHOICES, blank=True)
-#
-#     @property
-#     def get_file_ext(self):
-#         return self.input_file.name[(self.input_file.name.rfind(".")+1):]
-#
-#
-#
+
+class File(models.Model):
+
+    FILE_TYPE_CHOICES = (('jpg', 'JPG'), ('png', 'PNG'), ('pdf', 'PDF'), ('txt', 'TXT'))
+
+    input_files_path = "transactions/files/input_files/"
+    converted_files_path = "transactions/files/converted_files/"
+
+    input_file = models.FileField(upload_to=input_files_path)
+    converted_file = models.FileField(upload_to=converted_files_path, blank=True, null=True)
+
+    has_error = models.BooleanField(default=False)
+
+    file_type = models.CharField(max_length=3, choices=FILE_TYPE_CHOICES, blank=True)
+
+    @property
+    def get_file_ext(self):
+        if self.converted_file:
+            return self.converted_file.name[(self.converted_file.name.rfind(".")+1):].lower()
+        else:
+            return self.input_file.name[(self.input_file.name.rfind(".")+1):].lower()
+
+    @property
+    def get_pure_name(self):
+        return self.input_file.name[(self.input_file.name.rfind("/") + 1): self.input_file.name.rfind(".")]
+
+    @property
+    def get_pdf_path(self):
+        return self.converted_files_path + self.get_pure_name + ".pdf"
+
+    @property
+    def convert_input_file(self):
+        if self.file_type == "pdf":
+            return converters.pdf_converter(self)
+        elif self.file_type == "png":
+            return converters.png_converter(self)
+        elif self.file_type == "jpg":
+            return converters.jpg_converter(self)
+        else:
+            pass
+
+    @property
+    def temp_method(self):
+        return self.get_pure_name
+
+    def save(self, *args, **kwargs):
+
+        if self.file_type != self.get_file_ext:
+            self.file_type = self.get_file_ext
+            super().save()
+
+        if not self.converted_file:
+            converted = self.convert_input_file
+            if not converted:
+                self.has_error = True
+                super().save()
+            else:
+                super().save()
+
+
+
 # def convert_file(instance, sender, *args, **kwargs):
 #     if not instance.input_file:
 #
