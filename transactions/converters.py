@@ -2,6 +2,7 @@ import img2pdf
 import time
 from PIL import Image
 import os
+from django.conf import settings
 
 
 def pdf_converter(file):
@@ -15,9 +16,10 @@ def pdf_converter(file):
 def jpg_converter(file):
 
     try:
+        pdf_path_raw = file.get_pdf_path_raw
         pdf_path = file.get_pdf_path
         pdf_bytes = img2pdf.convert(file.input_file.path)
-        pdf_file = open(pdf_path, "wb")
+        pdf_file = open(pdf_path_raw, "wb")
         pdf_file.write(pdf_bytes)
         pdf_file.close()
         file.converted_file = pdf_path
@@ -33,8 +35,9 @@ def png_converter(file):
 
     try:
         png_path = file.input_file.path
+        print(png_path)
         png = Image.open(png_path)
-        jpg_path = file.input_files_path+file.get_pure_name+'.jpg'
+        jpg_path = file.get_jpg_path_temp
         rgb_im = png.convert('RGB')
         png.close()
         os.remove(png_path)

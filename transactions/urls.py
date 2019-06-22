@@ -5,7 +5,10 @@ app_name = 'transactions'
 
 
 urlpatterns = [
-    url(r"^add$", views.TransactionAddView.as_view(), name='add'),
+    # url(r"^add$", views.TransactionAddView.as_view(), name='add'),
+
+    url(r"^add/(?P<file_uuid>[0-9a-f-]+)/$", views.TransactionAddView.as_view(), name='add'),
+
     url(r'^get_otp/(?P<otp_1>[0-9]+)/(?P<otp_2>[0-9]+)/$', views.GetOtpView.as_view(),
         name='get_otp'),
     url(r'^list/$', views.TransactionListView.as_view(), name='list'),
@@ -15,6 +18,6 @@ urlpatterns = [
 
     url(r'^getprint/(?P<otp_1>[0-9]+)/(?P<otp_2>[0-9]+)/(?P<station_code>.+)$', views.get_print, name='get_print'),
 
-    url(r'^file/convert/$', views.file_convert, name="file_convert")
+    url(r'^file/add/$', views.file_add, name="file_add")
 
 ]

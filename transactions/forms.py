@@ -7,9 +7,11 @@ class TransactionAddForm(forms.ModelForm):
     payment_mode = forms.ChoiceField(choices=Transaction.PAYMENT_MODE_CHOICES, widget=forms.RadioSelect(attrs={'class': "custom-control custom-radio custom-control-input", 'id': "defaultGroupExample"}))
     color_model = forms.ChoiceField(choices=Transaction.COLOR_MODEL_CHOICES, widget=forms.RadioSelect)
 
+    # file_uuid = forms.CharField()
+
     class Meta:
         model = Transaction
-        fields = ('file', 'pages', 'payment_mode', 'color_model', 'copies', 'refrence')
+        fields = ('pages', 'payment_mode', 'color_model', 'copies', 'refrence')
 
 
 class FileAddForm(forms.ModelForm):
@@ -17,3 +19,4 @@ class FileAddForm(forms.ModelForm):
     class Meta:
         model = File
         fields = ("input_file", )
+

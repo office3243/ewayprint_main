@@ -10,6 +10,7 @@ from django.contrib import messages
 from . import alert_messages
 from django.core.validators import FileExtensionValidator
 from . import converters
+import os
 
 
 media_path = settings.MEDIA_ROOT
@@ -30,9 +31,7 @@ class Transaction(models.Model):
     otp_1 = models.CharField(max_length=4)
     otp_2 = models.CharField(max_length=4)
 
-    file = models.FileField(upload_to="transactions/transaction_files/{}/".format(datetime.date.today()),
-                            validators=[FileExtensionValidator(allowed_extensions=ALLOWED_FILE_TYPES), ]
-                            )
+    file = models.ForeignKey("File", on_delete=models.CASCADE)
 
     payment_mode = models.CharField(max_length=2, choices=PAYMENT_MODE_CHOICES)
     color_model = models.CharField(max_length=2, default='BW', choices=COLOR_MODEL_CHOICES)
@@ -104,16 +103,18 @@ post_save.connect(assign_amount, sender=Transaction)
 
 class File(models.Model):
 
+    ALLOWED_FILE_TYPES = ("png", "jpg", "jpeg", "pdf")
     FILE_TYPE_CHOICES = (('jpg', 'JPG'), ('png', 'PNG'), ('pdf', 'PDF'), ('txt', 'TXT'))
-
     input_files_path = "transactions/files/input_files/"
     converted_files_path = "transactions/files/converted_files/"
 
-    input_file = models.FileField(upload_to=input_files_path)
-    converted_file = models.FileField(upload_to=converted_files_path, blank=True, null=True)
-
+    input_file = models.FileField(upload_to=input_files_path,
+                                  validators=[FileExtensionValidator(allowed_extensions=ALLOWED_FILE_TYPES), ])
+    converted_file = models.FileField(upload_to=converted_files_path,
+                                      validators=[FileExtensionValidator(allowed_extensions=ALLOWED_FILE_TYPES), ],
+                                      blank=True, null=True)
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True)
     has_error = models.BooleanField(default=False)
-
     file_type = models.CharField(max_length=3, choices=FILE_TYPE_CHOICES, blank=True)
 
     @property
@@ -130,6 +131,14 @@ class File(models.Model):
     @property
     def get_pdf_path(self):
         return self.converted_files_path + self.get_pure_name + ".pdf"
+
+    @property
+    def get_jpg_path_temp(self):
+        return media_path + "/" +  self.input_files_path + self.get_pure_name+'.jpg'
+
+    @property
+    def get_pdf_path_raw(self):
+        return media_path + "/" + self.get_pdf_path
 
     @property
     def convert_input_file(self):
@@ -160,6 +169,18 @@ class File(models.Model):
             else:
                 super().save()
 
+
+def delete_file_path(sender, instance, *args, **kwargs):
+    try:
+        if instance.input_file:
+            os.remove(instance.input_file.path)
+        if instance.converted_file:
+            os.remove(instance.converted_file.path)
+    except:
+        pass
+
+
+post_delete.connect(delete_file_path, sender=File)
 
 
 # def convert_file(instance, sender, *args, **kwargs):

@@ -4,7 +4,7 @@
 
 {% block body %}
     <h2>Welcome To Eway Print</h2>
-    <a href="{% url 'transactions:add' %}"><button class="btn btn-success">Add Transaction</button></a>
+    <a href="{% url 'transactions:file_add' %}"><button class="btn btn-success">Add Transaction</button></a>
 
     <a href="{% url 'transactions:list' %}"><button class="btn btn-success">My Transactions</button></a>
 
@@ -15,8 +15,9 @@
     <br><br><br>
     <a href="{% url 'accounts:logout' %}"><button class="btn btn-danger">Logout</button></a>
 
-    <a href="{% url 'transactions:file_convert' %}"><button class="btn btn-danger">File Convert</button></a>
+    <a href="{% url 'transactions:file_add' %}"><button class="btn btn-danger">File Convert</button></a>
 
+    <a href="{% url 'transactions:ajax_try' %}"><button class="btn btn-danger">Ajax Try</button></a>
 
 
 {% endblock %}

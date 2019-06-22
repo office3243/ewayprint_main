@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import TransactionAddForm, FileAddForm
 from django.urls import reverse_lazy
 import random
-from .models import Transaction
+from .models import Transaction, File
 from django.views.generic import TemplateView, ListView
 from django.http import Http404, HttpResponse, JsonResponse
 from django.contrib import messages
@@ -29,7 +29,8 @@ def check_unique_otps():
         return otp_1, otp_2
 
 
-class TransactionAddView(LoginRequiredMixin, CreateView):
+# class TransactionAddView(LoginRequiredMixin, CreateView):
+class TransactionAddView(CreateView):
 
     form_class = TransactionAddForm
     template_name = 'transactions/add.html'
@@ -47,6 +48,7 @@ class TransactionAddView(LoginRequiredMixin, CreateView):
         pages = form.cleaned_data.get('pages')
         copies = form.cleaned_data.get('copies')
         amount = rate*pages*copies
+        file_uuid = self.kwargs.get("file_uuid")
 
         if form.instance.payment_mode == "AC":
             if amount > self.request.user.wallet.balance:
@@ -59,6 +61,7 @@ class TransactionAddView(LoginRequiredMixin, CreateView):
         form.instance.otp_2 = otp_2
         form.instance.user = self.request.user
         form.instance.amount = amount
+        form.instance.file = get_object_or_404(File, uuid=file_uuid)
         form.save()
         return redirect('transactions:get_otp', otp_1=otp_1, otp_2=otp_2)
 
@@ -170,12 +173,18 @@ def get_print(request, otp_1, otp_2, station_code):
         return JsonResponse({'otp_found': False})
 
 
-def file_convert(request):
-    form = FileAddForm(request.POST or None, request.FILES or None)
-    if form.is_valid():
-        file = form.save()
-        if file.has_error:
-            messages.warning(request, alert_messages.FILE_HAS_ERROR_MESSAGE)
+def file_add(request):
+    transaction_form = TransactionAddForm()
+    if request.method == 'POST':
+        form = FileAddForm(request.POST, request.FILES)
+        if form.is_valid():
+            file = form.save()
+            if file.has_error:
+                return JsonResponse({'error': True, 'message': alert_messages.FILE_HAS_ERROR_MESSAGE})
+            else:
+                return JsonResponse({'error': False, 'message': 'Uploaded Successfully', "file_uuid": file.uuid})
         else:
-            return HttpResponse("file added successfully" + file.file_type)
-    return render(request, "transactions/file_convert.html", {'form': form})
+            return JsonResponse({'error': True, 'errors': form.errors})
+    else:
+        form = FileAddForm()
+        return render(request, 'transactions/file_add.html', {'form': form, "transaction_form": transaction_form})
