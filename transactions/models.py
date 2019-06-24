@@ -12,6 +12,8 @@ from django.core.validators import FileExtensionValidator
 from . import converters
 import os
 
+SITE_DOMAIN = "127.0.0.1:8000/"
+
 
 media_path = settings.MEDIA_ROOT
 
@@ -26,7 +28,7 @@ class Transaction(models.Model):
     ALLOWED_FILE_TYPES = ("png", "jpg", "jpeg", "pdf")
 
     user = models.ForeignKey(USER_MODEL, on_delete=models.CASCADE)
-    uuid = models.UUIDField(default=uuid.uuid4, unique=True)
+    uuid = models.UUIDField(unique=True)
 
     otp_1 = models.CharField(max_length=4)
     otp_2 = models.CharField(max_length=4)
@@ -77,6 +79,10 @@ class Transaction(models.Model):
         else:
             return self.file.name[-30:]
 
+    @property
+    def get_file_url(self):
+        return SITE_DOMAIN + self.file.converted_file.url
+
 
 def assign_amount(sender, instance, *args, **kwargs):
     amount = instance.pages * instance.station_class.rate.get_rate(instance.color_model)
@@ -99,6 +105,14 @@ def assign_amount(sender, instance, *args, **kwargs):
 
 
 post_save.connect(assign_amount, sender=Transaction)
+
+
+def delete_file(sender, instance, *args, **kwargs):
+    if instance.file:
+        instance.file.delete()
+
+
+post_delete.connect(delete_file, sender=Transaction)
 
 
 class File(models.Model):

@@ -16,6 +16,7 @@ from stations.models import Station, StationClass
 import json
 
 
+
 def generate_four_digit_otp():
     return ''.join(random.sample("0123456789", 4)), ''.join(random.sample("0123456789", 4))
 
@@ -48,7 +49,7 @@ class TransactionAddView(CreateView):
         pages = form.cleaned_data.get('pages')
         copies = form.cleaned_data.get('copies')
         amount = rate*pages*copies
-        file_uuid = self.kwargs.get("file_uuid")
+        file = get_object_or_404(File, uuid=self.kwargs.get("file_uuid"))
 
         if form.instance.payment_mode == "AC":
             if amount > self.request.user.wallet.balance:
@@ -61,7 +62,8 @@ class TransactionAddView(CreateView):
         form.instance.otp_2 = otp_2
         form.instance.user = self.request.user
         form.instance.amount = amount
-        form.instance.file = get_object_or_404(File, uuid=file_uuid)
+        form.instance.file = file
+        form.instance.uuid = file.uuid
         form.save()
         return redirect('transactions:get_otp', otp_1=otp_1, otp_2=otp_2)
 
@@ -158,18 +160,18 @@ class TransactionHideView(LoginRequiredMixin, DeleteView):
 
 
 def get_print(request, otp_1, otp_2, station_code):
-    station = get_object_or_404(Station, station_code=station_code)
-    transaction = Transaction.objects.get(otp_1=otp_1, otp_2=otp_2)
+    station = get_object_or_404(Station, code=station_code)
     try:
-        file_printed = transaction.printed
+        transaction = Transaction.objects.get(otp_1=otp_1, otp_2=otp_2)
+        file_printed = transaction.is_printed
         python_dict = {'otp_found': True, 'file_printed': file_printed, 'color_model': transaction.color_model,
-                       'amount': transaction.amount, 'payment_mode': transaction.payment_mode, 'file_path': transaction.file.url}
-        transaction.file_printed = True
+                       'amount': transaction.amount, 'payment_mode': transaction.payment_mode, 'file_path': transaction.get_file_url}
+        transaction.is_printed = True
         transaction.printed_station = station
         transaction.printed_on = timezone.now()
         transaction.save()
         return JsonResponse(python_dict, safe=False)
-    except transaction.DoesNotExist:
+    except Transaction.DoesNotExist:
         return JsonResponse({'otp_found': False})
 
 
