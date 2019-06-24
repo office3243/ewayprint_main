@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='transaction',
-            name='refrence',
+            name='reference',
             field=models.CharField(blank=True, max_length=64),
         ),
         migrations.AlterField(

@@ -7,3 +7,4 @@ django-simple-history
 django-extensions
 img2pdf
 text2pdf
+django-widget-tweaks

@@ -54,6 +54,7 @@ INSTALLED_APPS = [
 
     'simple_history',
     'django_extensions',
+    'widget_tweaks',
 
 ]
 

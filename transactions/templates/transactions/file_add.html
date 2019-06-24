@@ -1,26 +1,95 @@
 {% extends 'portal/base.html' %}
 {% load crispy_forms_tags %}
+{% load widget_tweaks %}
+
 
 {% block title %}Add Transactions{% endblock %}
-
 {% block body %}
 
-   <form
-    enctype="multipart/form-data"
-    id="fileForm" method="POST"
-    novalidate="">
+   <form enctype="multipart/form-data" id="fileForm" method="POST" novalidate="">
       {% csrf_token %}
-      {{ form|crispy }}
-      <input type="submit" class="btn btn-primary"/>
+{#      {{ form|crispy }}#}
+
+
+       <div class="row tz-upload-row">
+                      <div class="col-md tz-label-btmmargin"><i class="fas fa-file-upload tz-icnrightmargin"></i>Upload your File :</div>
+                      <div class="col-md">
+                          <label class="form-control" >
+                              <span style="float: left;padding: 5px;">
+                                  <i class="fas fa-paperclip tz-icnrightmargin"></i>
+                                  <span id="file-input-msg">Choose File</span><span id="file-input-msg-pages" style="display:none;"></span>
+                              </span>
+
+                              {% render_field form.input_file id="file" style="display: none;" %}
+                              <button id="preview-btn" onclick="preview();" type="button" class="tz-preview-btn" data-toggle="modal" data-target="#previewmodal">Preview</button>
+{#                              <input required  onchange="fileChange(this);" style="display: none;" id="file"  type="file"  >#}
+                          </label>
+                      </div>
+                    </div>
+
+
+       <button type="submit" class="btn tz-getotpbtn">Upload or Preview</button>
+
    </form>
 
     <div class="container" id="transactionFormDiv" style="display: none;">
         <form id="transactionForm" action="" method="post">
             {% csrf_token %}
-            {{ transaction_form|crispy }}
-            <input type="submit" class="btn btn-primary"/>
+{#            {{ transaction_form|crispy }}#}
+
+                    <div class="row tz-upload-row" id="pagesblock">
+                      <div class="col-md tz-label-btmmargin"><i class="fas fa-scroll tz-icnrightmargin"></i>Pages :</div>
+                      <div class="col-md">
+                        <span class="form-control" id="pages"></span>
+
+
+
+                      </div>
+                    </div>
+
+                    {{ transaction_form.color_model|as_crispy_field }}
+
+                    <div class="row tz-upload-row">
+                      <div class="col-md tz-label-btmmargin"><i class="fas fa-copy tz-icnrightmargin"></i>Copies :</div>
+                      <div class="col-md">
+{#                        <input class="form-control" type="number" name="copies" id="copies" value = "1" required onchange="getAmount();">#}
+
+                          {% render_field transaction_form.copies class="form-control" %}
+
+                      </div>
+                    </div>
+
+
+
+                    <div class="row tz-upload-row">
+                      <div class="col-md tz-label-btmmargin"><i class="fas fa-rupee-sign tz-icnrightmargin"></i>Amount :</div>
+                      <div class="col-md">
+                        <span class="form-control" id="amount">0</span>
+                      </div>
+                    </div>
+
+
+                    {{ transaction_form.payment_mode|as_crispy_field }}
+
+
+                    <div class="row tz-upload-row">
+                      <div class="col-md tz-label-btmmargin"><i class="fas fa-comment-alt tz-icnrightmargin"></i>Reference :</div>
+                      <div class="col-md">
+{#                        <input class="form-control" type="text" name="reference" id="reference">#}
+
+                        {% render_field transaction_form.reference class="form-control" %}
+
+
+                      </div>
+                    </div>
+                    <div class="text-center" style="margin:25px;">
+
+                    <button type="submit" class="btn tz-getotpbtn">Get OTP</button></div>
+
         </form>
     </div>
+
+
 
 
 
@@ -58,6 +127,7 @@
 
                 {#$("#transactionForm").action("/transactions/add/"+response.file_uuid);#}
                 $("#transactionForm").attr("action", ("/transactions/add/"+response.file_uuid + "/"));
+                alert(response.file_url);
 
                 $("#transactionFormDiv").show();
 
@@ -71,3 +141,6 @@
     // end
    </script>
 {% endblock %}
+
+
+

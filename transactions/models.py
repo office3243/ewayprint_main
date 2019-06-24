@@ -53,7 +53,7 @@ class Transaction(models.Model):
 
     is_permitted = models.BooleanField(default=True)
 
-    refrence = models.CharField(max_length=64, blank=True)
+    reference = models.CharField(max_length=64, blank=True)
 
     objects = TransactionManager
 
@@ -74,8 +74,8 @@ class Transaction(models.Model):
 
     @property
     def get_display_text(self):
-        if self.refrence:
-            return self.refrence
+        if self.reference:
+            return self.reference
         else:
             return self.file.name[-30:]
 

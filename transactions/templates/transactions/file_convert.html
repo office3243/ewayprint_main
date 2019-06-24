@@ -11,12 +11,11 @@
     novalidate="">
       {% csrf_token %}
       {{ form|crispy }}
-      <input type="button" class="btn btn-primary"/>
+      <input type="submit" class="btn btn-primary"/>
    </form>
 
-
     <div class="container" id="transactionFormDiv" style="display: none;">
-        <form id="transactionForm" action="">
+        <form id="transactionForm" action="" method="post">
             {% csrf_token %}
             {{ transaction_form|crispy }}
             <input type="submit" class="btn btn-primary"/>
@@ -54,11 +53,11 @@
                     })
                 }
                 else{
-                    window.location = "";
+                    {#window.location = "";#}
                 }
 
                 {#$("#transactionForm").action("/transactions/add/"+response.file_uuid);#}
-                {#$("#transactionForm").attr("action", "/transactions/");#}
+                $("#transactionForm").attr("action", ("/transactions/add/"+response.file_uuid + "/"));
 
                 $("#transactionFormDiv").show();
 

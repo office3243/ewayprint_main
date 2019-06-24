@@ -176,6 +176,9 @@ def get_print(request, otp_1, otp_2, station_code):
 
 
 def file_add(request):
+
+    print("CALLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
+
     transaction_form = TransactionAddForm()
     if request.method == 'POST':
         form = FileAddForm(request.POST, request.FILES)
@@ -184,7 +187,8 @@ def file_add(request):
             if file.has_error:
                 return JsonResponse({'error': True, 'message': alert_messages.FILE_HAS_ERROR_MESSAGE})
             else:
-                return JsonResponse({'error': False, 'message': 'Uploaded Successfully', "file_uuid": file.uuid})
+                return JsonResponse({'error': False, 'message': 'Uploaded Successfully', "file_uuid": file.uuid,
+                                     "file_url": file.converted_file.url})
         else:
             return JsonResponse({'error': True, 'errors': form.errors})
     else:

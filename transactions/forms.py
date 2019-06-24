@@ -11,7 +11,7 @@ class TransactionAddForm(forms.ModelForm):
 
     class Meta:
         model = Transaction
-        fields = ('pages', 'payment_mode', 'color_model', 'copies', 'refrence')
+        fields = ('pages', 'payment_mode', 'color_model', 'copies', 'reference')
 
 
 class FileAddForm(forms.ModelForm):
