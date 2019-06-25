@@ -26,6 +26,7 @@
 //     }
 // }
 function preview(element){
+
      let url = element.getAttribute('fileurl');
     console.log(url);
     // element = "file:///home/tazammul/Downloads/pdf.pdf";

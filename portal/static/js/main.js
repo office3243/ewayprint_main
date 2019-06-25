@@ -1,7 +1,46 @@
-var rate = {
-    "blackWhite" : 1,
-    "color" : 5
-}
+var pages;
+var bw_rate;
+var color_rate;
+// form upload
+    $('#fileForm').submit(function(e){
+        e.preventDefault();
+        $form = $(this);
+        var formData = new FormData(this);
+        $.ajax({
+            url: window.location.pathname,
+            type: 'POST',
+            data: formData,
+            success: function (response) {
+                $('.error').remove();
+                console.log(response);
+                if(response.error){
+                    formError(response.message);
+                    $.each(response.errors, function(name, error){
+                        error = '<small class="text-muted error">' + error + '</small>';
+                        $form.find('[name=' + name + ']').after(error);
+
+                    })
+                }
+                else{
+                    $("#transactionForm").attr("action", ("/transactions/add/"+response.file_uuid + "/"));
+                    alert(response.file_url);
+                    $('#preview-btn').attr("fileUrl", response.file_url);
+                    $("#transactionFormDiv").show();
+                    pages = response.pages;
+                    blackWhite = response.bw_rate;
+                    bw_rate = response.bw_rate;
+                    color_rate = response.color_rate;
+                    calculateForm();
+                }
+
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+    });
+    // end
+
 function currentlink(element){
     defaultlink();
     document.getElementById(element).classList.add("tz-currentlink");
@@ -124,4 +163,16 @@ function addingFooter(){
     //     document.querySelector("#footer").classList.add("tz-footer2");
     //     document.querySelector("#footer").style.display = "block";
     // }
+}
+function calculateForm(){
+    var copies = document.querySelector("#copies").value;
+    var rate;
+    if(document.querySelector('#color').checked){
+        rate = color_rate;
+    }
+    else{
+        rate = bw_rate;
+    }
+    document.querySelector("#pages").innerHTML = pages;
+    document.querySelector("#amount").innerHTML = pages * rate * copies;
 }

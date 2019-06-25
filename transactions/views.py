@@ -185,8 +185,10 @@ def file_add(request):
             if file.has_error:
                 return JsonResponse({'error': True, 'message': alert_messages.FILE_HAS_ERROR_MESSAGE})
             else:
+                bw_rate, color_rate = StationClass.objects.first().rate.get_rates_tuple
                 return JsonResponse({'error': False, 'message': 'Uploaded Successfully', "file_uuid": file.uuid,
-                                     "file_url": file.get_file_url, 'pages': file.pages})
+                                     "file_url": file.get_file_url, 'pages': file.pages,
+                                     "bw_rate": bw_rate, "color_rate": color_rate})
         else:
             return JsonResponse({'error': True, 'errors': form.errors})
     else:

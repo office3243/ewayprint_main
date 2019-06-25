@@ -286,9 +286,9 @@ body{
     #file-input-msg-pages{
         display: inline !important;
     }
-    #pagesblock{
-        display:none;
-    }
+    /*#pagesblock{*/
+    /*    display:none;*/
+    /*}*/
     .tz-accountul{
         position: relative;
         left: -4px;

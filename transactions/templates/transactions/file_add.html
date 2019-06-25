@@ -21,7 +21,7 @@
                         <span id="file-input-msg-pages" style="display:none;"></span>
                     </span>
 
-                    {% render_field form.input_file id="file" style="display: none;" required="required" onchange="fileChange();"%}
+                    {% render_field form.input_file id="file" style="display: none;" required="required" onchange="fileChange();" blank="false" %}
                     <button id="preview-btn" onclick="preview(this)" type="button" class="tz-preview-btn" data-toggle="modal" data-target="#previewmodal">Preview</button>
                     <button id="change-btn" type="submit" class="tz-preview-btn btn-warning"  style="border-radius:0px !important">Change</button>
                 </label>
@@ -51,12 +51,12 @@
             </div>
 
 
-            <div class="row tz-upload-row ">
-                <div class="col-md tz-label-btmmargin"><i class="fas fa-comment-alt tz-icnrightmargin"></i>Pages :</div>
-                <div class="col-md">
-                    {% render_field transaction_form.pages class="form-control" readonly="readonly" value=5 %}
-                </div>
-            </div>
+{#            <div class="row tz-upload-row ">#}
+{#                <div class="col-md tz-label-btmmargin"><i class="fas fa-comment-alt tz-icnrightmargin"></i>Pages :</div>#}
+{#                <div class="col-md">#}
+{#                    {% render_field transaction_form.pages class="form-control" readonly="readonly" value=5 %}#}
+{#                </div>#}
+{#            </div>#}
 
 
             <div class="row tz-upload-row ">
@@ -73,12 +73,12 @@
                 <div class="col-md tz-radio-marginleft">
                     <div class=" custom-control custom-radio custom-control-inline">
 
-                        <input value="BW" type="radio" class="custom-control-input" id="black-white" name="color_model" required  checked onchange="getAmount();">
+                        <input value="BW" type="radio" class="custom-control-input" id="black-white" name="color_model" required  checked onchange="calculateForm();">
                         <label class="custom-control-label" for="black-white">Black & White</label>
                     </div>
 
                     <div class="custom-control custom-radio custom-control-inline">
-                        <input value="CL" type="radio" class="custom-control-input" id="color" name="color_model" onchange="getAmount();">
+                        <input value="CL" type="radio" class="custom-control-input" id="color" name="color_model" onchange="calculateForm();">
                         <label class="custom-control-label" for="color">Colour</label>
                     </div>
                 </div>
@@ -88,7 +88,7 @@
             <div class="row tz-upload-row">
                 <div class="col-md tz-label-btmmargin"><i class="fas fa-copy tz-icnrightmargin"></i>Copies :</div>
                 <div class="col-md">
-                    {% render_field transaction_form.copies class="form-control" %}
+                    {% render_field transaction_form.copies class="form-control" id="copies" value=1 onchange="calculateForm();" %}
                 </div>
             </div>
 
@@ -150,42 +150,7 @@
 
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
-   <script type="text/javascript">
-     // form upload
-    $('#fileForm').submit(function(e){
-        e.preventDefault();
-        $form = $(this);
-        var formData = new FormData(this);
-        $.ajax({
-            url: window.location.pathname,
-            type: 'POST',
-            data: formData,
-            success: function (response) {
-                $('.error').remove();
-                console.log(response);
-                if(response.error){
-                    formError(response.message);
-                    $.each(response.errors, function(name, error){
-                        error = '<small class="text-muted error">' + error + '</small>';
-                        $form.find('[name=' + name + ']').after(error);
 
-                    })
-                }
-                else{
-                    $("#transactionForm").attr("action", ("/transactions/add/"+response.file_uuid + "/"));
-                    alert(response.file_url);
-                    $('#preview-btn').attr("fileUrl", response.file_url);
-                    $("#transactionFormDiv").show();
-                }
-
-            },
-            cache: false,
-            contentType: false,
-            processData: false
-        });
-    });
-    // end
-   </script>
 
 
 {% endblock %}
