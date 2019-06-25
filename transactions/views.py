@@ -49,6 +49,7 @@ class TransactionAddView(CreateView):
         pages = form.cleaned_data.get('pages')
         copies = form.cleaned_data.get('copies')
         amount = rate*pages*copies
+        print(amount)
         file = get_object_or_404(File, uuid=self.kwargs.get("file_uuid"))
 
         if form.instance.payment_mode == "AC":
@@ -176,8 +177,6 @@ def get_print(request, otp_1, otp_2, station_code):
 
 
 def file_add(request):
-
-    print("CALLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
 
     transaction_form = TransactionAddForm()
     if request.method == 'POST':

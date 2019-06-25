@@ -85,8 +85,7 @@ class Transaction(models.Model):
 
 
 def assign_amount(sender, instance, *args, **kwargs):
-    amount = instance.pages * instance.station_class.rate.get_rate(instance.color_model)
-
+    amount = instance.pages * instance.copies * instance.station_class.rate.get_rate(instance.color_model)
     if instance.amount != amount:
         instance.amount = amount
         instance.save()

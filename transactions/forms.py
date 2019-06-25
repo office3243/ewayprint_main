@@ -8,6 +8,7 @@ class TransactionAddForm(forms.ModelForm):
     color_model = forms.ChoiceField(choices=Transaction.COLOR_MODEL_CHOICES, widget=forms.RadioSelect)
 
     # file_uuid = forms.CharField()
+    pages = forms.IntegerField(widget=forms.NumberInput())
 
     class Meta:
         model = Transaction
@@ -15,6 +16,8 @@ class TransactionAddForm(forms.ModelForm):
 
 
 class FileAddForm(forms.ModelForm):
+
+    input_file = forms.FileField(widget=forms.FileInput(attrs={"required": "true"}))
 
     class Meta:
         model = File
