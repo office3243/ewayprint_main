@@ -16,7 +16,6 @@ from stations.models import Station, StationClass
 import json
 
 
-
 def generate_four_digit_otp():
     return ''.join(random.sample("0123456789", 4)), ''.join(random.sample("0123456789", 4))
 
@@ -45,28 +44,32 @@ class TransactionAddView(CreateView):
 
     def form_valid(self, form):
 
-        rate = StationClass.objects.first().rate.get_rate(form.cleaned_data.get('color_model'))
-        pages = form.cleaned_data.get('pages')
-        copies = form.cleaned_data.get('copies')
-        amount = rate*pages*copies
-        print(amount)
-        file = get_object_or_404(File, uuid=self.kwargs.get("file_uuid"))
+        try:
+            file = get_object_or_404(File, uuid=self.kwargs.get("file_uuid"))
+            rate = StationClass.objects.first().rate.get_rate(form.cleaned_data.get('color_model'))
+            pages = file.pages
+            copies = form.cleaned_data.get('copies')
+            amount = rate*pages*copies
+            file = get_object_or_404(File, uuid=self.kwargs.get("file_uuid"))
 
-        if form.instance.payment_mode == "AC":
-            if amount > self.request.user.wallet.balance:
-                messages.warning(self.request, settings.INSUFFICIENT_BALANCE_MESSAGE)
-                return redirect("wallets:view")
-            else:
-                self.request.user.wallet.deduct_amount(amount)
-        otp_1, otp_2 = check_unique_otps()
-        form.instance.otp_1 = otp_1
-        form.instance.otp_2 = otp_2
-        form.instance.user = self.request.user
-        form.instance.amount = amount
-        form.instance.file = file
-        form.instance.uuid = file.uuid
-        form.save()
-        return redirect('transactions:get_otp', otp_1=otp_1, otp_2=otp_2)
+            if form.instance.payment_mode == "AC":
+                if amount > self.request.user.wallet.balance:
+                    messages.warning(self.request, settings.INSUFFICIENT_BALANCE_MESSAGE)
+                    return redirect("wallets:view")
+                else:
+                    self.request.user.wallet.deduct_amount(amount)
+            otp_1, otp_2 = check_unique_otps()
+            form.instance.otp_1 = otp_1
+            form.instance.otp_2 = otp_2
+            form.instance.user = self.request.user
+            form.instance.amount = amount
+            form.instance.file = file
+            form.instance.uuid = file.uuid
+            form.save()
+            return redirect('transactions:get_otp', otp_1=otp_1, otp_2=otp_2)
+        except:
+            messages.warning(self.request, alert_messages.GETTING_ISSUES)
+            return redirect("transactions:file_add")
 
 
 class GetOtpView(LoginRequiredMixin, TemplateView):
@@ -130,11 +133,6 @@ class TransactionDeleteView(LoginRequiredMixin, DeleteView):
         else:
             messages.success(self.request, alert_messages.TRANSACTION_DELETED_MESSGAE)
         return super().delete(request, *args, **kwargs)
-
-    # def delete(self, request, *args, **kwargs):
-    #     messages.success(self.request, alert_messages.TRANSACTION_DELETED_MESSGAE)
-    #     return super().delete(request, *args, **kwargs)
-    #
 
 
 class TransactionHideView(LoginRequiredMixin, DeleteView):

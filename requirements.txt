@@ -8,3 +8,5 @@ django-extensions
 img2pdf
 text2pdf
 django-widget-tweaks
+psycopg2
+PyPDF2

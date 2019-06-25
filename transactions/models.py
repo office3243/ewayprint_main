@@ -11,6 +11,8 @@ from . import alert_messages
 from django.core.validators import FileExtensionValidator
 from . import converters
 import os
+from PyPDF2 import PdfFileReader
+
 
 SITE_DOMAIN = "127.0.0.1:8000/"
 
@@ -41,7 +43,6 @@ class Transaction(models.Model):
     station_class = models.ForeignKey('stations.StationClass', on_delete=models.CASCADE, default=1)
 
     amount = models.DecimalField(decimal_places=2, max_digits=5)
-    pages = models.PositiveSmallIntegerField()
 
     created_on = models.DateTimeField(auto_now_add=True)
 
@@ -83,14 +84,18 @@ class Transaction(models.Model):
     def get_file_url(self):
         return SITE_DOMAIN + self.file.converted_file.url
 
+    @property
+    def calculate_amount(self):
+        amount = self.file.pages * self.copies * self.station_class.rate.get_rate(self.color_model)
+        return amount
+
 
 def assign_amount(sender, instance, *args, **kwargs):
-    amount = instance.pages * instance.copies * instance.station_class.rate.get_rate(instance.color_model)
+    amount = instance.calculate_amount
     if instance.amount != amount:
         instance.amount = amount
         instance.save()
 
-#
 # def refund_amount(sender, instance, *args, **kwargs):
 #     if instance.is_permitted and not instance.is_printed and instance.payment_mode == "AC":
 #         instance.user.wallet.balance += instance.amount
@@ -127,6 +132,7 @@ class File(models.Model):
                                       validators=[FileExtensionValidator(allowed_extensions=ALLOWED_FILE_TYPES), ],
                                       blank=True, null=True)
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
+    pages = models.PositiveSmallIntegerField(blank=True, null=True)
     has_error = models.BooleanField(default=False)
     file_type = models.CharField(max_length=3, choices=FILE_TYPE_CHOICES, blank=True)
 
@@ -147,7 +153,7 @@ class File(models.Model):
 
     @property
     def get_jpg_path_temp(self):
-        return media_path + "/" +  self.input_files_path + self.get_pure_name+'.jpg'
+        return media_path + "/" + self.input_files_path + self.get_pure_name+'.jpg'
 
     @property
     def get_pdf_path_raw(self):
@@ -163,6 +169,17 @@ class File(models.Model):
             return converters.jpg_converter(self)
         else:
             pass
+
+    @property
+    def count_pdf_pages(self):
+        pdf = PdfFileReader(open(self.converted_file.path, 'rb'))
+        return pdf.getNumPages()
+
+    def assign_pages(self):
+        pages = self.count_pdf_pages
+        if self.pages != pages:
+            self.pages = pages
+            self.save()
 
     @property
     def temp_method(self):
@@ -182,6 +199,10 @@ class File(models.Model):
             else:
                 super().save()
 
+        if self.converted_file and not self.pages:
+            self.assign_pages()
+            super().save()
+
 
 def delete_file_path(sender, instance, *args, **kwargs):
     try:
@@ -194,17 +215,3 @@ def delete_file_path(sender, instance, *args, **kwargs):
 
 
 post_delete.connect(delete_file_path, sender=File)
-
-
-# def convert_file(instance, sender, *args, **kwargs):
-#     if not instance.input_file:
-#
-#
-#
-# def assign_file_type(sender, instance, *args, **kwargs):
-#     file_type = instance.get_file_ext
-#     if instance.file_type != file_type:
-#         instance.file_type = file_type
-#         instance.save()
-
-
