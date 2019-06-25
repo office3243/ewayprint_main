@@ -1,31 +1,36 @@
-
-
-function preview(){
-
-    let fileName = document.querySelector('#file').value;
-    let lastIndex = fileName.lastIndexOf('.');
-    let fileExt = fileName.slice(lastIndex);
-    var allowed_types =  ['.jpg', '.png', '.pdf', '.jpeg', '.doc', '.docx','.txt', '.odt', '.odp', '.ods', '.xls', '.xlsx', '.ppt', '.pptx', '.rtf'];
-    if  (allowed_types.includes(fileExt)){
-        if(fileExt == '.pdf'){
-            const file=document.querySelector("#file").files[0];
-            let reader = new FileReader();
-            reader.addEventListener("load", function (){
-                let dt = reader.result;
-                previewpdf(dt);
-            }, false);
-            if (file) {
-                reader.readAsDataURL(file);
-            }
-        }
-        else{
-            //Converting all file to pdf
-            
-        }
-    }
-    else{
-        //File Type Not Allowed
-    }
+// function preview(){
+//
+//     let fileName = document.querySelector('#file').value;
+//     let lastIndex = fileName.lastIndexOf('.');
+//     let fileExt = fileName.slice(lastIndex);
+//     var allowed_types =  ['.jpg', '.png', '.pdf', '.jpeg', '.doc', '.docx','.txt', '.odt', '.odp', '.ods', '.xls', '.xlsx', '.ppt', '.pptx', '.rtf'];
+//     if  (allowed_types.includes(fileExt)){
+//         if(fileExt == '.pdf'){
+//             const file=document.querySelector("#file").files[0];
+//             let reader = new FileReader();
+//             reader.addEventListener("load", function (){
+//                 let dt = reader.result;
+//                 previewpdf(dt);
+//             }, false);
+//             if (file) {
+//                 reader.readAsDataURL(file);
+//             }
+//         }
+//         else{
+//             //Converting all file to pdf
+//
+//         }
+//     }
+//     else{
+//         //File Type Not Allowed
+//     }
+// }
+function preview(element){
+     let url = element.getAttribute('fileurl');
+    console.log(url);
+    // element = "file:///home/tazammul/Downloads/pdf.pdf";
+    // element = "http://127.0.0.1:8000/media/transactions/files/converted_files/logo_HVJ7JS9.pdf";
+    previewpdf(url);
 }
 
 //Declaring Variables
@@ -40,7 +45,7 @@ let pdfDoc,
 //Creating And Removing Canvas
 let canvasCount = 0;
 function getCanvasElement(){
-    let container = document.querySelector('#container');
+    let container = document.querySelector('#canvas-container');
     let canvas = document.createElement("canvas");
     let id;
     if(canvasCount == 0){
@@ -69,10 +74,10 @@ function previewpdf(data){
     canvas = document.getElementById(id),
     ctx = canvas.getContext('2d');
 
-    pdfAsArray = convertDataURIToBinary(data)
-    pdfjsLib.getDocument(pdfAsArray).promise.then(pdfDoc_=>{
+    // pdfAsArray = convertDataURIToBinary(data)
+    pdfjsLib.getDocument(data).promise.then(pdfDoc_=>{
         pdfDoc = pdfDoc_;
-    
+
         document.querySelector('#page-count').textContent = pdfDoc.numPages;
 
         renderPage(pageNum);
@@ -80,20 +85,20 @@ function previewpdf(data){
 
 }
 
-//for converting base64 to arrayunit8
-function convertDataURIToBinary(dataURI){
-    let BASE64_MARKER = ';base64,';
-    let base64Index = dataURI.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
-    let base64 = dataURI.substring(base64Index);
-    let raw = window.atob(base64);
-    let rawLength = raw.length;
-    let array = new Uint8Array(new ArrayBuffer(rawLength));
-
-    for(let i = 0; i < rawLength; i++) {
-        array[i] = raw.charCodeAt(i);
-    }
-    return array;
-}
+// //for converting base64 to arrayunit8
+// function convertDataURIToBinary(dataURI){
+//     let BASE64_MARKER = ';base64,';
+//     let base64Index = dataURI.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
+//     let base64 = dataURI.substring(base64Index);
+//     let raw = window.atob(base64);
+//     let rawLength = raw.length;
+//     let array = new Uint8Array(new ArrayBuffer(rawLength));
+//
+//     for(let i = 0; i < rawLength; i++) {
+//         array[i] = raw.charCodeAt(i);
+//     }
+//     return array;
+// }
 
 //Render the page
 const renderPage = num => {
@@ -103,7 +108,7 @@ const renderPage = num => {
     pdfDoc.getPage(num).then(page =>{
         //Set Scale
         document.querySelector("#previewmodal").style.display = "block";
-        let container = document.querySelector('#container');
+        let container = document.querySelector('#canvas-container');
         let viewport = page.getViewport(1);
         scale = container.clientWidth / viewport.width;
         viewport = page.getViewport(scale);
@@ -124,9 +129,9 @@ const renderPage = num => {
         });
 
         //Output Current Page
-        document.querySelector('#page-num').textContent = num;  
+        document.querySelector('#page-num').textContent = num;
     });
-    
+
 };
 
 // Check for pages rendering

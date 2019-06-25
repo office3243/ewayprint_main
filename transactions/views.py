@@ -181,11 +181,12 @@ def file_add(request):
         form = FileAddForm(request.POST, request.FILES)
         if form.is_valid():
             file = form.save()
+            print(file, file.has_error)
             if file.has_error:
                 return JsonResponse({'error': True, 'message': alert_messages.FILE_HAS_ERROR_MESSAGE})
             else:
                 return JsonResponse({'error': False, 'message': 'Uploaded Successfully', "file_uuid": file.uuid,
-                                     "file_url": file.converted_file.url})
+                                     "file_url": file.get_file_url, 'pages': file.pages})
         else:
             return JsonResponse({'error': True, 'errors': form.errors})
     else:

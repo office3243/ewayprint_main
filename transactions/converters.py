@@ -9,6 +9,7 @@ def pdf_converter(file):
     try:
         file.converted_file = file.input_file
         file.save()
+        return True
     except:
         return False
 
@@ -27,7 +28,6 @@ def jpg_converter(file):
         return True
 
     except Exception as e:
-        print(555, e)
         return False
 
 

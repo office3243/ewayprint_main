@@ -42,30 +42,43 @@ function displayNone(){
     document.getElementById("account-section").style.display="none";
 }
 
-function fileChange(element){
-    document.querySelector("#file-input-msg").innerHTML =   element.files[0].name;
-    let fileName = document.querySelector('#file').value;
-    let lastIndex = fileName.lastIndexOf('.');
-    let fileExt = fileName.slice(lastIndex);
-    if(fileExt == '.pdf'){
-        var input = document.getElementById("file");
-        var reader = new FileReader();
-        reader.readAsBinaryString(input.files[0]);
-        reader.onloadend = function(){
-            var count = reader.result.match(/\/Type[\s]*\/Page[^s]/g).length;
-            document.querySelector("#file-input-msg-pages").innerHTML =" - " +count+ " pages";
-            document.querySelector("#pages").innerHTML = count;
-            getAmount();
-        }
-    }
-    else if (fileExt == '.jpg' || fileExt == '.jpeg' || fileExt == '.png'){
-        document.querySelector("#file-input-msg-pages").innerHTML =" - 1 page";
-        document.querySelector("#pages").innerHTML = 1;
-        getAmount();
+function fileChange(){
+
+    var allowed_types = ["jpg", "pdf", "png"];
+    var input_field = document.querySelector("#file");
+    file_name = input_field.files[0].name;
+    if (allowed_types.includes(file_name.slice(file_name.lastIndexOf('.')+1, ))){
+        $("#formErrorMessage").hide().text("");
+        $("#file-input-msg").text(input_field.files[0].name);
     }
     else{
-        //
+            $("#fileForm").trigger("reset");
+            $("#file-input-msg").text("Choose File");
+            $("#formErrorMessage").show().text("File Type Not Allowed");
     }
+
+    // let fileName = document.querySelector('#file').value;
+    // let lastIndex = fileName.lastIndexOf('.');
+    // let fileExt = fileName.slice(lastIndex);
+    // if(fileExt == '.pdf'){
+    //     var input = document.getElementById("file");
+    //     var reader = new FileReader();
+    //     reader.readAsBinaryString(input.files[0]);
+    //     reader.onloadend = function(){
+    //         var count = reader.result.match(/\/Type[\s]*\/Page[^s]/g).length;
+    //         document.querySelector("#file-input-msg-pages").innerHTML =" - " +count+ " pages";
+    //         document.querySelector("#pages").innerHTML = count;
+    //         getAmount();
+    //     }
+    // }
+    // else if (fileExt == '.jpg' || fileExt == '.jpeg' || fileExt == '.png'){
+    //     document.querySelector("#file-input-msg-pages").innerHTML =" - 1 page";
+    //     document.querySelector("#pages").innerHTML = 1;
+    //     getAmount();
+    // }
+    // else{
+    //     //
+    // }
     
     
 }
@@ -95,20 +108,20 @@ function changeTable(element){
     }
 }
 function addingFooter(){
-    document.querySelector("#footer").style.display = "none";
-    document.querySelector("#footer").classList.remove("tz-footer1");
-    document.querySelector("#footer").classList.remove("tz-footer2");
-    var x = document.querySelector("body").clientHeight;
-    console.log(x);
-    x = x + 55 ;
-    var y = window.innerHeight;
-    console.log(y);
-    if(x < y){
-        document.querySelector("#footer").classList.add("tz-footer1");
-        document.querySelector("#footer").style.display = "block";
-    }
-    else{
-        document.querySelector("#footer").classList.add("tz-footer2");
-        document.querySelector("#footer").style.display = "block";
-    }
+    // document.querySelector("#footer").style.display = "none";
+    // document.querySelector("#footer").classList.remove("tz-footer1");
+    // document.querySelector("#footer").classList.remove("tz-footer2");
+    // var x = document.querySelector("body").clientHeight;
+    // console.log(x);
+    // x = x + 55 ;
+    // var y = window.innerHeight;
+    // console.log(y);
+    // if(x < y){
+    //     document.querySelector("#footer").classList.add("tz-footer1");
+    //     document.querySelector("#footer").style.display = "block";
+    // }
+    // else{
+    //     document.querySelector("#footer").classList.add("tz-footer2");
+    //     document.querySelector("#footer").style.display = "block";
+    // }
 }

@@ -14,8 +14,8 @@ import os
 from PyPDF2 import PdfFileReader
 
 
-SITE_DOMAIN = "127.0.0.1:8000/"
-
+SITE_DOMAIN = "http://127.0.0.1:8000/"
+SITE_DOMAIN_2 = "http://127.0.0.1:8000"
 
 media_path = settings.MEDIA_ROOT
 
@@ -82,7 +82,7 @@ class Transaction(models.Model):
 
     @property
     def get_file_url(self):
-        return SITE_DOMAIN + self.file.converted_file.url
+        return SITE_DOMAIN_2 + self.file.converted_file.url
 
     @property
     def calculate_amount(self):
@@ -169,6 +169,10 @@ class File(models.Model):
             return converters.jpg_converter(self)
         else:
             pass
+
+    @property
+    def get_file_url(self):
+        return SITE_DOMAIN_2 + self.converted_file.url
 
     @property
     def count_pdf_pages(self):
