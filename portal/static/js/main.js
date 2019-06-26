@@ -23,7 +23,7 @@ var color_rate;
                 }
                 else{
                     $("#transactionForm").attr("action", ("/transactions/add/"+response.file_uuid + "/"));
-                    alert(response.file_url);
+                    // alert(response.file_url);
                     $('#preview-btn').attr("fileUrl", response.file_url);
                     $("#transactionFormDiv").show();
                     pages = response.pages;
@@ -89,37 +89,16 @@ function fileChange(){
     if (allowed_types.includes(file_name.slice(file_name.lastIndexOf('.')+1, ))){
         $("#formErrorMessage").hide().text("");
         $("#file-input-msg").text(input_field.files[0].name);
+        document.querySelector('#change').innerHTML= "Change";
     }
     else{
             $("#fileForm").trigger("reset");
             $("#file-input-msg").text("Choose File");
+            document.querySelector('#change').innerHTML= "Upload";
             $("#formErrorMessage").show().text("File Type Not Allowed");
+             document.querySelector('.text-muted-error').style.display  = "none";
     }
-
-    // let fileName = document.querySelector('#file').value;
-    // let lastIndex = fileName.lastIndexOf('.');
-    // let fileExt = fileName.slice(lastIndex);
-    // if(fileExt == '.pdf'){
-    //     var input = document.getElementById("file");
-    //     var reader = new FileReader();
-    //     reader.readAsBinaryString(input.files[0]);
-    //     reader.onloadend = function(){
-    //         var count = reader.result.match(/\/Type[\s]*\/Page[^s]/g).length;
-    //         document.querySelector("#file-input-msg-pages").innerHTML =" - " +count+ " pages";
-    //         document.querySelector("#pages").innerHTML = count;
-    //         getAmount();
-    //     }
-    // }
-    // else if (fileExt == '.jpg' || fileExt == '.jpeg' || fileExt == '.png'){
-    //     document.querySelector("#file-input-msg-pages").innerHTML =" - 1 page";
-    //     document.querySelector("#pages").innerHTML = 1;
-    //     getAmount();
-    // }
-    // else{
-    //     //
-    // }
-    
-    
+    $("#fileForm").trigger("submit");
 }
 
 function getAmount(){

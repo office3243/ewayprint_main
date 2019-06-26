@@ -25,14 +25,26 @@
 //         //File Type Not Allowed
 //     }
 // }
-function preview(element){
-
-     let url = element.getAttribute('fileurl');
-    console.log(url);
-    // element = "file:///home/tazammul/Downloads/pdf.pdf";
-    // element = "http://127.0.0.1:8000/media/transactions/files/converted_files/logo_HVJ7JS9.pdf";
-    previewpdf(url);
+function preview(){
+    if(document.querySelector('#file').files[0]){
+        if(document.querySelector('#preview-btn').hasAttribute('fileurl')){
+            let url = document.querySelector('#preview-btn').getAttribute('fileurl');
+            $("#canvas-container").show();
+            previewpdf(url);
+        }
+    }
+    else{
+        document.querySelector('#preview-btn').removeAttribute('fileurl');
+        $("#canvas-container").hide();
+    }
 }
+$("#previewmodal").on('shown.bs.modal', function(){
+    if(document.querySelector('#preview-btn').hasAttribute('fileurl')){
+    }else{
+        $("#previewmodal").modal('hide');
+        // $("#canvas-container").show();
+    }
+        });
 
 //Declaring Variables
 let pdfDoc,

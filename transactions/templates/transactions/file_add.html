@@ -14,16 +14,17 @@
             <div class="col-md tz-label-btmmargin"><i class="fas fa-file-upload tz-icnrightmargin"></i>Upload your File :</div>
 
             <div class="col-md">
-                <label class="form-control" >
-                    <span style="float: left;padding: 5px;">
-                        <i class="fas fa-paperclip tz-icnrightmargin"></i>
+                <label class="form-control"  style="padding-right:0; padding-left: 0;">
+                    <span class="tz-mainlblfile">
+                        <span class="float-left tz-uploadspan" id="change">Upload</span>
+                        <i class="fas fa-paperclip tz-icnrightmargin" style="margin-left: 10px;"></i>
                         <span id="file-input-msg">Choose File</span>
                         <span id="file-input-msg-pages" style="display:none;"></span>
                     </span>
 
                     {% render_field form.input_file id="file" style="display: none;" required="required" onchange="fileChange();" blank="false" %}
-                    <button id="preview-btn" onclick="preview(this)" type="button" class="tz-preview-btn" data-toggle="modal" data-target="#previewmodal">Preview</button>
-                    <button id="change-btn" type="submit" class="tz-preview-btn btn-warning"  style="border-radius:0px !important">Change</button>
+                    <button id="preview-btn" onclick="preview()" type="button" class="tz-preview-btn" data-toggle="modal" data-target="#previewmodal">Preview</button>
+{#                    <button id="change-btn" type="submit" class="tz-preview-btn btn-warning"  style="border-radius:0px !important">Change</button>#}
                 </label>
             </div>
         </div>

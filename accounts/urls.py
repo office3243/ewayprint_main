@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import LoginView, LogoutView, logout_then_login
 from . import views
 from .forms import CustomLoginForm
 from django.views.generic import TemplateView
@@ -25,7 +25,10 @@ urlpatterns = [
 
     url(r'^login/$', LoginView.as_view(template_name='accounts/login.html', authentication_form=CustomLoginForm),
         name='login'),
-    url(r'^logout/$', LogoutView.as_view(template_name='accounts/logout.html'), name='logout'),
+    # url(r'^logout/$', LogoutView.as_view(template_name='accounts/logout.html'), name='logout'),
+
+    url(r'^logout/$', logout_then_login, name='logout'),
+
     #
 
 ]

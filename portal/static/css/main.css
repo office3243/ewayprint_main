@@ -1,4 +1,6 @@
-
+.text-muted-error{
+    display:none !important;
+}
 body{
     margin:0px;
     padding:0px;
@@ -44,6 +46,19 @@ body{
 .tz-icnrightmargin{
     margin-right:8px;
 }
+.tz-mainlblfile{
+    display: inline-block;
+    width: 80%;
+}
+.tz-uploadspan{
+    display: inline-block;
+    float: right;
+    position: relative;
+    top: -7px;
+    padding: 7px 5px;
+    background: #49beb7;
+    color: #fff;
+}
 .tz-preview-btn{
     float:right;
     height: 38px;
@@ -53,8 +68,8 @@ body{
     border: none;
     position: relative;
     top: -7px;
-    width: 75px;
-    right: -13px;
+    width: 20%;
+    padding: 0;
 }
 .tz-label-btmmargin{
     margin-bottom: 5px;
