@@ -1,3 +1,21 @@
+$("#nonPrintedFilterBtn").click(function () {
+    $("#printedFilterBtn").removeClass("tz-singlebtn-active");
+    $("#nonPrintedFilterBtn").addClass("tz-singlebtn-active");
+    $(".printed").show();
+    $(".non-printed").hide();
+
+});
+$("#printedFilterBtn").click(function () {
+    $("#nonPrintedFilterBtn").removeClass("tz-singlebtn-active");
+    $("#printedFilterBtn").addClass("tz-singlebtn-active");
+    $(".non-printed").show();
+    $(".printed").hide();
+
+});
+
+
+// START MAIN.JS
+
 var pages;
 var bw_rate;
 var color_rate;
@@ -92,6 +110,7 @@ function fileChange(){
         document.querySelector('#change').innerHTML= "Change";
     }
     else{
+            // $("#transactionForm").trigger("reset").hide();
             $("#fileForm").trigger("reset");
             $("#file-input-msg").text("Choose File");
             document.querySelector('#change').innerHTML= "Upload";
@@ -155,3 +174,220 @@ function calculateForm(){
     document.querySelector("#pages").innerHTML = pages;
     document.querySelector("#amount").innerHTML = pages * rate * copies;
 }
+
+
+// END MAIN.JS
+
+
+
+
+// START PREVIEW.JS
+
+function preview(){
+    if(document.querySelector('#file').files[0]){
+        if(document.querySelector('#preview-btn').hasAttribute('fileurl')){
+            let url = document.querySelector('#preview-btn').getAttribute('fileurl');
+            $("#canvas-container").show();
+            previewpdf(url);
+        }
+    }
+    else{
+        document.querySelector('#preview-btn').removeAttribute('fileurl');
+        $("#canvas-container").hide();
+    }
+}
+$("#previewmodal").on('shown.bs.modal', function(){
+    if(document.querySelector('#preview-btn').hasAttribute('fileurl')){
+    }else{
+        $("#previewmodal").modal('hide');
+        // $("#canvas-container").show();
+    }
+        });
+
+//Declaring Variables
+let pdfDoc,
+    pageNum,
+    pageIsRendering,
+    pageNumIsPending,
+    scale,
+    canvas,
+    ctx;
+
+//Creating And Removing Canvas
+let canvasCount = 0;
+function getCanvasElement(){
+    let container = document.querySelector('#canvas-container');
+    let canvas = document.createElement("canvas");
+    let id;
+    if(canvasCount == 0){
+        canvasCount++;
+    }
+    else{
+        id = "my-canvas" + canvasCount;
+        let removingElement = document.getElementById(id);
+        container.removeChild(removingElement);
+        canvasCount++;
+    }
+    id = "my-canvas"+canvasCount;
+    canvas.setAttribute("id",id);
+    container.appendChild(canvas);
+    return(id);
+}
+//Get document
+function previewpdf(data){
+    pdfDoc = null,
+    pageNum = 1,
+    pageIsRendering = false,
+    pageNumIsPending = null,
+    scale = 1;
+    //Getting new canvas id
+    let id = getCanvasElement();
+    canvas = document.getElementById(id),
+    ctx = canvas.getContext('2d');
+
+    // pdfAsArray = convertDataURIToBinary(data)
+    pdfjsLib.getDocument(data).promise.then(pdfDoc_=>{
+        pdfDoc = pdfDoc_;
+
+        document.querySelector('#page-count').textContent = pdfDoc.numPages;
+
+        renderPage(pageNum);
+    });
+
+}
+
+
+//Render the page
+const renderPage = num => {
+    pageIsRendering = true;
+
+    //Get Page
+    pdfDoc.getPage(num).then(page =>{
+        //Set Scale
+        document.querySelector("#previewmodal").style.display = "block";
+        let container = document.querySelector('#canvas-container');
+        let viewport = page.getViewport(1);
+        scale = container.clientWidth / viewport.width;
+        viewport = page.getViewport(scale);
+        canvas.height =  viewport.height;
+        canvas.width = viewport.width;
+
+        const renderCtx = {
+            canvasContext: ctx,
+            viewport
+        }
+        page.render(renderCtx).promise.then(() =>{
+            pageIsRendering = false;
+
+            if(pageNumIsPending !== null){
+                renderPage(pageNumIsPending);
+                pageNumIsPending = null;
+            }
+        });
+
+        //Output Current Page
+        document.querySelector('#page-num').textContent = num;
+    });
+
+};
+
+// Check for pages rendering
+const queueRenderPage = num =>{
+    if(pageIsRendering){
+        pageNumIsPending = num;
+    }else{
+        renderPage(num);
+    }
+}
+
+//Show Prev Page
+const showPrevPage = () => {
+    if(pageNum <= 1){
+        return;
+    }
+    pageNum--;
+    queueRenderPage(pageNum);
+}
+
+//Show Next Page
+const showNextPage = () => {
+    if(pageNum >= pdfDoc.numPages){
+        return;
+    }
+    pageNum++;
+    queueRenderPage(pageNum);
+}
+
+
+//Button Events
+document.querySelector('#prev').addEventListener('click',showPrevPage);
+document.querySelector('#next').addEventListener('click',showNextPage);
+
+
+function formError(error_message) {
+
+    // document.getElementById("file").value = "";
+    // document.getElementById("formErrorMessage").innerText = error_message;
+    $("#fileForm").trigger("reset");
+    $("#file-input-msg").text("Choose File");
+    $("#formErrorMessage").show().text(error_message);
+
+}
+
+// END PREVIEW.JS
+
+
+// START LOGIN.JS
+
+
+function currentlink(element){
+    defaultlink();
+    document.getElementById(element).classList.add("tz-currentlink");
+    document.getElementById("forget-section").style.display="none";
+    if(element == 'login-tab'){
+        document.getElementById("login-section").style.display="block";
+        document.getElementById("sign-up-section").style.display="none";
+    }
+    else{
+        document.getElementById("sign-up-section").style.display="block";
+        document.getElementById("login-section").style.display="none";
+    }
+    addingFooter();
+}
+function defaultlink(){
+
+     var check = document.getElementById("login-tab").classList.contains("tz-currentlink");
+    if(check == true){
+        document.getElementById("login-tab").classList.remove("tz-currentlink");
+    }
+     check = document.getElementById("sign-up-tab").classList.contains("tz-currentlink");
+    if(check == true){
+        document.getElementById("sign-up-tab").classList.remove("tz-currentlink");
+    }
+}
+function forgetPassword(element){
+    defaultlink();
+    document.getElementById("sign-up-section").style.display="none";
+    document.getElementById("login-section").style.display="none";
+    document.getElementById("forget-section").style.display="block";
+    addingFooter();
+}
+function addingFooter(){
+    document.querySelector("#footer").style.display = "none";
+    document.querySelector("#footer").classList.remove("tz-footer1");
+    document.querySelector("#footer").classList.remove("tz-footer2");
+    var x = document.querySelector("body").clientHeight;
+    x = x + 55 ;
+    var y = window.innerHeight;
+    if(x < y){
+        document.querySelector("#footer").classList.add("tz-footer1");
+        document.querySelector("#footer").style.display = "block";
+    }
+    else{
+        document.querySelector("#footer").classList.add("tz-footer2");
+        document.querySelector("#footer").style.display = "block";
+    }
+}
+
+
+// END LOGIN.JS

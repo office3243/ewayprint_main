@@ -13,7 +13,9 @@
       <div class="tz-account-article">
         <div class="tz-accountarticleheading">Custom Recharge</div>
         <form action="{% url "recharges:create_with_custom_pack" %}" method="post">
-          <input class="form-control" type="number"  id="custom-recharge-input" placeholder="Add Amount">
+          {% csrf_token %}
+
+          <input name="custom_price" class="form-control" type="number"  id="custom-recharge-input" placeholder="Add Amount">
           <button class="form-control tz-account-btn" type="submit">Add Recharge</button>
         </form>
       </div>
@@ -29,7 +31,7 @@
                         <div class="tz-accountli-price"><i class="fas fa-rupee-sign tz-accountli-priceicn"></i>{{ offer_pack.get_price }}</div>
                         <div>Additional Recharge :<span class="tz-account-fontweight">{{ offer_pack.get_extra_balance }}</span></div>
                         <div>Total Recharge :<span class="tz-account-fontweight">{{ offer_pack.get_balance }}</span></div>
-                        <button class="btn tz-accountli-btn" data-toggle="modal" data-target="#basicrechargemodal">Add Recharge</button>
+                        <a href="{{ offer_pack.get_make_recharge_url }}"><button class="btn tz-accountli-btn" data-toggle="modal" data-target="#basicrechargemodal">Add Recharge</button></a>
                     </li>
                 {% endfor %}
             {% endif %}

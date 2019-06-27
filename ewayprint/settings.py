@@ -179,7 +179,7 @@ LOGIN_REDIRECT_URL = reverse_lazy('portal:home')
 INSUFFICIENT_BALANCE_MESSAGE = "You don't have enough balance. Kindly recharge your wallet to make this transaction"
 
 # site_domain = "http://www.printmycopy.com/"
-site_domain = "127.0.0.1:8000/"
+site_domain = "http://127.0.0.1:8000/"
 
 
 # Payments App

@@ -17,8 +17,8 @@ from PyPDF2 import PdfFileReader
 # SITE_DOMAIN = "http://www.printmycopy.com/"
 # SITE_DOMAIN_2 = "http://www.printmycopy.com"
 
-SITE_DOMAIN = "127.0.0.1:8000/"
-SITE_DOMAIN_2 = "127.0.0.1:8000"
+SITE_DOMAIN = "http://127.0.0.1:8000/"
+SITE_DOMAIN_2 = "http://127.0.0.1:8000"
 
 media_path = settings.MEDIA_ROOT
 
