@@ -14,7 +14,7 @@ payu = PAYU()
 
 
 payu_details = {
-    'first_name': "Eway Print",
+    'first_name': "PrintMyCopy",
     "email": "ewayprint.inc@gmail.com",
     "phone": "9028116344",
 }

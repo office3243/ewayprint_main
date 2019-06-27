@@ -30,6 +30,26 @@ class OfferPack(models.Model):
     def get_absolute_url(self):
         return reverse_lazy("recharges:offer_pack_detail", kwargs={"offer_pack_id": self.id})
 
+    @property
+    def get_display_text(self):
+        return self.name
+
+    @property
+    def get_headline(self):
+        return self.headline
+
+    @property
+    def get_price(self):
+        return self.price
+
+    @property
+    def get_balance(self):
+        return self.balance
+
+    @property
+    def get_extra_balance(self):
+        return (self.balance - self.price)
+
     objects = OfferPackManager()
 
 
