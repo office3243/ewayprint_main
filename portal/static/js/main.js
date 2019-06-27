@@ -13,7 +13,10 @@ $("#printedFilterBtn").click(function () {
 
 });
 
-
+window.addEventListener("load",function () {
+   const loader = document.querySelector(".loader");
+   loader.className += "hidden";
+});
 // START MAIN.JS
 
 var pages;
@@ -108,9 +111,10 @@ function fileChange(){
         $("#formErrorMessage").hide().text("");
         $("#file-input-msg").text(input_field.files[0].name);
         document.querySelector('#change').innerHTML= "Change";
+         $("#transactionForm").show();
     }
     else{
-            // $("#transactionForm").trigger("reset").hide();
+            $("#transactionForm").trigger("reset").hide();
             $("#fileForm").trigger("reset");
             $("#file-input-msg").text("Choose File");
             document.querySelector('#change').innerHTML= "Upload";

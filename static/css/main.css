@@ -263,7 +263,7 @@ body{
         display: inline-block;
     }
     .tz-header-name{
-        left:20%;
+        position:static;
     }
     .tz-ul{
         display: inline-block;
