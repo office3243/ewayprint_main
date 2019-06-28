@@ -15,7 +15,7 @@ $("#printedFilterBtn").click(function () {
 
 window.addEventListener("load",function () {
    const loader = document.querySelector(".loader");
-   loader.className += "hidden";
+   loader.className += " hidden";
 });
 // START MAIN.JS
 
